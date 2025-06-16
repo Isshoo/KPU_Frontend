@@ -47,9 +47,6 @@ function App() {
             data-theme={theme === 'dark' ? '' : 'light'}
             data-lang={locale === 'EN' ? '' : 'ID'}
           >
-            <header>
-              <HeaderBar />
-            </header>
             <main>
               <ScrollToTop />
               <Routes>
@@ -57,9 +54,6 @@ function App() {
                 <Route path="/register" element={<RegisterPage />} />
               </Routes>
             </main>
-            <footer>
-              <FooterBar />
-            </footer>
           </div>
         </ThemeProvider>
       </LocaleProvider>
@@ -75,7 +69,6 @@ function App() {
         >
           <header>
             <HeaderBar />
-            <NavigationBar logout={onSignOut} username={authUser.name} />
           </header>
           <main>
             <ScrollToTop />

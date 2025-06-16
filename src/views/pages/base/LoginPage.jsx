@@ -4,47 +4,40 @@ import LoginInput from '../../components/Base/auth/LoginInput';
 import { LocaleConsumer } from '../../../contexts/LocaleContext';
 import { useDispatch } from 'react-redux';
 import { asyncSetAuthUser } from '../../../states/authUser/action';
-import { GiWorld } from 'react-icons/gi';
+import '../../../views/styles/Base/login.css';
 
 function LoginPage() {
   const dispatch = useDispatch();
 
-  const onLogin = ({ email, password }) => {
-    dispatch(asyncSetAuthUser({ email, password }));
+  const onLogin = ({ username, password }) => {
+    dispatch(asyncSetAuthUser({ username, password }));
   };
 
   return (
     <LocaleConsumer>
-      {({ locale }) => {
-        if (locale === 'EN') {
-          return (
-            <div>
-              <div className="form-container logreg">
-                <div className="logo">
-                  <GiWorld />
-                </div>
-                <LoginInput login={onLogin} locale={locale} />
-                <p>
-                  Don&apos;t have an account? <Link to="/register">Sign up here!</Link>
-                </p>
-              </div>
-            </div>
-          );
-        }
-        return (
-          <div>
-            <div className="form-container logreg">
-              <div className="logo">
-                <GiWorld />
-              </div>
-              <LoginInput login={onLogin} locale={locale} />
+      {({ locale }) => (
+        <div className="login-container">
+          <div className="login-card">
+            <div className="logo-container">
+              <img src="/logo_kpu.png" alt="KPU Logo" />
+              <h1>Komisi Pemilihan Umum</h1>
               <p>
-                Belum punya akun? <Link to="/register">Registrasi disini!</Link>
+                {locale === 'EN' 
+                  ? 'General Election Commission of Indonesia'
+                  : 'Komisi Pemilihan Umum Republik Indonesia'}
               </p>
             </div>
+            <LoginInput login={onLogin} locale={locale} />
+            {/* <p className="register-link">
+              {locale === 'EN' ? (
+                <>Don&apos;t have an account? <Link to="/register">Sign up here!</Link></>
+              ) : (
+                <>Belum punya akun? <Link to="/register">Daftar di sini</Link></>
+              )}
+            </p> */}
           </div>
-        );
-      }}
+        </div>
+      )}
     </LocaleConsumer>
   );
 }

@@ -27,29 +27,28 @@ async function register({ name, email, password }) {
   return user;
 }
 
-async function login({ email, password }) {
-  const response = await fetch(`${BASE_URL}/login`, {
+async function login({ username, password }) {
+  const response = await fetch(`${BASE_URL}/auth/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      email,
+      username,
       password,
     }),
   });
 
   const responseJson = await response.json();
+  console.log(responseJson);
 
-  const { status, message } = responseJson;
+  const { access_token } = responseJson;
 
-  if (status !== 'success') {
-    throw new Error(message);
+  if (!access_token) {
+    throw new Error(responseJson.message);
   }
 
-  const { data: { token } } = responseJson;
-
-  return token;
+  return access_token;
 }
 
 export {

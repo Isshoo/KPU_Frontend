@@ -25,16 +25,16 @@ function unsetAuthUserActionCreator() {
   };
 }
 
-function asyncSetAuthUser({ email, password }) {
+function asyncSetAuthUser({ username, password }) {
   return async (dispatch) => {
     try {
-      const token = await login({ email, password });
+      const token = await login({ username, password });
       putAccessToken(token);
       const authUser = await getOwnProfile();
 
       dispatch(setAuthUserActionCreator(authUser));
     } catch (error) {
-      alert(error.message);
+      console.error(error.message);
     }
   };
 }

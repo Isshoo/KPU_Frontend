@@ -14,10 +14,10 @@ function receiveUsersActionCreator(users) {
   };
 }
 
-function asyncRegisterUser({ name, email, password }) {
+function asyncRegisterUser({ name, username, password }) {
   return async () => {
     try {
-      await register({ name, email, password });
+      await register({ name, username, password });
       return { success: true };
     } catch (error) {
       return { success: false, message: error.message };

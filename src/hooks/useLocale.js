@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 
-const useLocale = (initialLocale = 'EN') => {
+const useLocale = (initialLocale = 'ID') => {
   const [locale, setLocale] = useState(() => localStorage.getItem('locale') || initialLocale);
 
   useEffect(() => {

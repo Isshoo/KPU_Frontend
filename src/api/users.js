@@ -5,14 +5,13 @@ async function getOwnProfile() {
   const response = await _fetchWithAuth(`${BASE_URL}/users/me`);
 
   const responseJson = await response.json();
+  console.log(responseJson);
 
-  const { status, message } = responseJson;
+  const { user } = responseJson;
 
-  if (status !== 'success') {
-    throw new Error(message);
+  if (!user) {
+    throw new Error('User not found');
   }
-
-  const { data: { user } } = responseJson;
 
   return user;
 }

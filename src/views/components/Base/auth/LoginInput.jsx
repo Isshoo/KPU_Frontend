@@ -1,60 +1,59 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import useInput from '../../../../hooks/useInput';
 import useVisibility from '../../../../hooks/useVisibility';
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa6';
 
 function LoginInput({ login, locale }) {
-  const [email, onEmailChange] = useInput('');
+  const [username, onUsernameChange] = useInput('');
   const [password, onPasswordChange] = useInput('');
   const [showPassword, setShowPassword] = useVisibility(false);
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    login({ username, password });
+  };
+
   return (
-    <form id="loginForm" className="logreg-form" autoComplete="on">
-      <div>
-        <label htmlFor="email">Email</label>
+    <form className="login-form" onSubmit={handleSubmit}>
+      <div className="input-group">
+        <label className="input-label" htmlFor="username">Username</label>
         <input
-          type="email"
-          id="email"
-          name="email"
-          className="email form-input"
+          type="text"
+          id="username"
+          name="username"
+          className="form-input"
           required
-          placeholder="Email"
-          value={email}
-          onChange={onEmailChange}
+          placeholder={locale === 'EN' ? 'Enter your username' : 'Masukkan username Anda'}
+          value={username}
+          onChange={onUsernameChange}
         />
       </div>
-      <div>
-        <label htmlFor="password">Password</label>
+      <div className="input-group">
+        <label className="input-label" htmlFor="password">Password</label>
         <div className="password-container">
           <input
             type={showPassword ? 'text' : 'password'}
             id="password"
             name="password"
-            className="password form-input"
+            className="form-input"
             required
-            placeholder="Password"
+            placeholder={locale === 'EN' ? 'Enter your password' : 'Masukkan password Anda'}
             value={password}
             onChange={onPasswordChange}
           />
           <button
-            id="login-toggle-password"
             type="button"
-            className="toggle-password"
+            className="password-toggle"
             onClick={setShowPassword}
-            aria-label="Toggle Password Button"
+            aria-label={locale === 'EN' ? 'Toggle password visibility' : 'Ubah visibilitas password'}
           >
             {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
           </button>
         </div>
       </div>
-      <button
-        type="button"
-        id="loginSubmit"
-        className="submit-btn"
-        onClick={() => login({ email, password })}
-      >
-        {locale === 'EN' ? 'Login' : 'Masuk'}
+      <button type="submit" className="submit-button">
+        {locale === 'EN' ? 'Sign In' : 'Masuk'}
       </button>
     </form>
   );

@@ -42,7 +42,7 @@
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 .input-group {
@@ -110,7 +110,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;
-  margin-top: 0.5rem;
+  margin-top: 1rem;
 }
 
 .submit-button:hover {

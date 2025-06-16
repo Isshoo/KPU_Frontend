@@ -21,10 +21,7 @@ function LoginPage() {
             <div className="logo-container">
               <img src="/logo_kpu.png" alt="KPU Logo" />
               <h1>Komisi Pemilihan Umum</h1>
-              <p>
-                {locale === 'EN' 
-                  ? 'General Election Commission of Indonesia'
-                  : 'Komisi Pemilihan Umum Republik Indonesia'}
+              <p> <b>Kota Manado</b>
               </p>
             </div>
             <LoginInput login={onLogin} locale={locale} />

@@ -21,7 +21,7 @@ const HeaderContainer = styled.header`
 const LogoSection = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 16px;
   
   .logo {
     height: 40px;
@@ -29,7 +29,7 @@ const LogoSection = styled.div`
   }
   
   span {
-    font-size: 18px;
+    font-size: 24px;
     font-weight: 600;
     color: #012970;
   }
@@ -83,6 +83,13 @@ const NavSection = styled.nav`
 const NotificationIcon = styled.div`
   position: relative;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    font-size: 20px;
+  }
   
   .badge {
     position: absolute;
@@ -91,8 +98,8 @@ const NotificationIcon = styled.div`
     background: #28a745;
     color: white;
     border-radius: 50%;
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     font-size: 12px;
     display: flex;
     align-items: center;
@@ -105,9 +112,13 @@ const ProfileSection = styled.div`
   align-items: center;
   gap: 10px;
   cursor: pointer;
+
+  svg {
+    font-size: 18px;
+  }
   
   span {
-    font-size: 14px;
+    font-size: 18px;
     color: #012970;
   }
 `;
@@ -163,14 +174,14 @@ const HeaderBar = () => {
         <span>KPU Kota Manado</span>
       </LogoSection>
       
-      <SearchBar>
+      {/* <SearchBar>
         <form>
           <input type="text" placeholder="Search" />
           <button type="submit">
             <FaSearch />
           </button>
         </form>
-      </SearchBar>
+      </SearchBar> */}
       
       <NavSection>
         <NotificationIcon>

@@ -11,7 +11,7 @@ const LayoutContainer = styled.div`
 `;
 
 const MainContent = styled.main`
-  margin-left: 300px;
+  margin-left: 275px;
   padding: 20px;
   margin-top: 60px;
 `;
@@ -105,7 +105,7 @@ const Layout = ({ children }) => {
               <li><Link to="/">Menu</Link></li>
               <li>{getPageTitle()}</li>
             </ol>
-            {authUser?.role === 'Staf' && location.pathname.includes('surat-keluar') && (
+            {authUser?.role === 'staf' && location.pathname.includes('surat-keluar') && (
               <ActionButtons>
                 <Link to="/input-surat-keluar" className="btn btn-warning">+ Surat Keluar</Link>
                 <Link to="/template" className="btn btn-secondary">Template Surat Keluar</Link>

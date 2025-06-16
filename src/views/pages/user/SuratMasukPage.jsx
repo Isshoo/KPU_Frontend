@@ -114,7 +114,6 @@ const SuratMasukPage = () => {
   return (
     <Layout>
       <Card>
-        <h5>Daftar Surat Masuk</h5>
         
         <Table>
           <thead>

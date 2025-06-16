@@ -7,7 +7,7 @@ const SidebarContainer = styled.aside`
   position: fixed;
   top: 60px;
   left: 0;
-  width: 300px;
+  width: 275px;
   height: calc(100vh - 60px);
   background: #fff;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
@@ -17,7 +17,7 @@ const SidebarContainer = styled.aside`
 
 const NavList = styled.ul`
   list-style: none;
-  padding: 0;
+  padding: 20px 0 0 0;
   margin: 0;
 `;
 
@@ -45,7 +45,7 @@ const NavItem = styled.li`
     }
     
     span {
-      font-size: 14px;
+      font-size: 16px;
     }
   }
 `;

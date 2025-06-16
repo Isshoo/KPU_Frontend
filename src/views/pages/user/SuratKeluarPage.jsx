@@ -119,7 +119,6 @@ const SuratKeluarPage = () => {
   return (
     <Layout>
       <Card>
-        <h5>Daftar Surat Keluar</h5>
         
         <Table>
           <thead>

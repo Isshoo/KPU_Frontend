@@ -7,7 +7,7 @@ const SidebarContainer = styled.aside`
   position: fixed;
   top: 60px;
   left: 0;
-  width: 275px;
+  width: 250px;
   height: calc(100vh - 60px);
   background: #fff;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
@@ -17,8 +17,12 @@ const SidebarContainer = styled.aside`
 
 const NavList = styled.ul`
   list-style: none;
-  padding: 20px 0 0 0;
+  padding: 20px 20px 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
 `;
 
 const NavItem = styled.li`
@@ -41,11 +45,11 @@ const NavItem = styled.li`
     }
     
     i {
-      font-size: 18px;
+      font-size: 20px;
     }
     
     span {
-      font-size: 16px;
+      font-size: 18px;
     }
   }
 `;

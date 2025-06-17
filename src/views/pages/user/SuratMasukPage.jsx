@@ -95,6 +95,7 @@ const ActionButton = styled.button`
   gap: 5px;
   font-size: 14px;
   transition: all 0.3s ease;
+  margin-bottom: 5px;
 
   &.primary {
     background-color: #0d6efd;

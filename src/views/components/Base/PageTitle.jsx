@@ -23,12 +23,18 @@ const PageTitle = () => {
           <li><Link to="/">Menu</Link></li>
           <li>{getPageTitle()}</li>
         </ol>
-        {authUser?.role === 'staf' && location.pathname.includes('surat-keluar') && (
+        {authUser?.role === 'staf' && location.pathname === '/surat-keluar' && (
           <div className="action-buttons">
             <Link to="/input-surat-keluar" className="btn btn-warning">+ Surat Keluar</Link>
             <Link to="/template" className="btn btn-secondary">Template Surat Keluar</Link>
           </div>
         )}
+        {authUser?.role === 'staf' && location.pathname === '/input-surat-keluar' && (
+          <div className="action-buttons">
+            <Link to="/surat-keluar" className="btn btn-warning">Kembali</Link>
+          </div>
+        )}
+
         {authUser?.role === 'staf' && location.pathname === '/surat-masuk' && (
           <div className="action-buttons">
             <Link to="/input-surat-masuk" className="btn btn-warning">+ Surat Masuk</Link>

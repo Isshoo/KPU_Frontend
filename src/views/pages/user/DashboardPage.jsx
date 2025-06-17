@@ -178,7 +178,7 @@ const DashboardPage = () => {
 
       setStats(statsData.data);
       setRecentSuratMasuk(suratMasukData.data.surat_list);
-      setRecentSuratKeluar(suratKeluarData.surat_list);
+      setRecentSuratKeluar(suratKeluarData.data.surat_list);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -264,7 +264,7 @@ const DashboardPage = () => {
                 <TableHeader>No. Surat</TableHeader>
                 <TableHeader>Pengirim</TableHeader>
                 <TableHeader>Tanggal</TableHeader>
-                <TableHeader>Status</TableHeader>
+                <TableHeader>Perihal</TableHeader>
               </tr>
             </thead>
             <tbody>
@@ -273,7 +273,7 @@ const DashboardPage = () => {
                   <TableCell>{surat.nomor_surat}</TableCell>
                   <TableCell>{surat.pengirim}</TableCell>
                   <TableCell>{new Date(surat.tanggal_surat).toLocaleDateString('id-ID')}</TableCell>
-                  <TableCell>{getStatusBadge(surat.status)}</TableCell>
+                  <TableCell>{surat.perihal}</TableCell>
                 </tr>
               ))}
             </tbody>
@@ -289,18 +289,18 @@ const DashboardPage = () => {
             <thead>
               <tr>
                 <TableHeader>No. Surat</TableHeader>
-                <TableHeader>Penerima</TableHeader>
+                <TableHeader>Ditujukan Kepada</TableHeader>
                 <TableHeader>Tanggal</TableHeader>
-                <TableHeader>Status</TableHeader>
+                <TableHeader>Perihal</TableHeader>
               </tr>
             </thead>
             <tbody>
               {recentSuratKeluar.map((surat) => (
                 <tr key={surat.id}>
                   <TableCell>{surat.nomor_surat}</TableCell>
-                  <TableCell>{surat.penerima}</TableCell>
+                  <TableCell>{surat.ditujukan_kepada}</TableCell>
                   <TableCell>{new Date(surat.tanggal_surat).toLocaleDateString('id-ID')}</TableCell>
-                  <TableCell>{getStatusBadge(surat.status)}</TableCell>
+                  <TableCell>{surat.perihal}</TableCell>
                 </tr>
               ))}
             </tbody>

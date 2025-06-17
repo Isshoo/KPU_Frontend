@@ -92,6 +92,7 @@ function App() {
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/surat-masuk" element={<SuratMasukPage />} />
                 <Route path="/surat-keluar" element={<SuratKeluarPage />} />
+                <Route path="/surat-keluar/input" element={<InputSuratKeluarPage />} />
                 <Route path="/daftar-anggota" element={<DaftarAnggotaPage />} />
                 <Route path="/kepala-sub-bagian" element={<KepalaSubBagianPage />} />
                 <Route path="/profile/:id" element={<ProfilPage />} />

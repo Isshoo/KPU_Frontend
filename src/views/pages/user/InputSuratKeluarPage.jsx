@@ -2,83 +2,35 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { FaArrowLeft, FaSave } from 'react-icons/fa';
+import { FaSave, FaTimes } from 'react-icons/fa';
 import Layout from '../../components/Base/Layout';
+import { BASE_URL } from '../../../globals/config';
+import { _fetchWithAuth } from '../../../utils/auth_helper';
 
 const Card = styled.div`
-  background: white;
+  background: #fff;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 20px;
-`;
-
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: 20px;
-  
-  h5 {
-    margin: 0;
-    font-size: 18px;
-    color: #012970;
-  }
-`;
-
-const ActionButtons = styled.div`
-  display: flex;
-  gap: 10px;
-`;
-
-const Button = styled.button`
-  padding: 8px 16px;
-  border-radius: 4px;
-  border: none;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  
-  &.secondary {
-    background: #6c757d;
-    color: white;
-  }
-  
-  &.primary {
-    background: #4154f1;
-    color: white;
-  }
-  
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
 `;
 
 const Form = styled.form`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
   gap: 20px;
-  
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
 `;
 
 const FormGroup = styled.div`
-  margin-bottom: 20px;
-  
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
   label {
-    display: block;
-    font-size: 14px;
-    color: #899bbd;
-    margin-bottom: 5px;
+    font-weight: 500;
+    color: #012970;
   }
-  
-  input, select, textarea {
-    width: 100%;
+
+  input, textarea, select {
     padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -89,207 +41,292 @@ const FormGroup = styled.div`
       border-color: #4154f1;
     }
   }
-  
+
   textarea {
-    min-height: 150px;
+    min-height: 100px;
     resize: vertical;
   }
-  
+
   .error {
     color: #dc3545;
     font-size: 12px;
-    margin-top: 5px;
+    margin-top: 4px;
   }
 `;
 
-const FileUpload = styled.div`
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 10px;
   margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid #eee;
-  
-  h6 {
-    margin: 0 0 10px;
-    font-size: 16px;
-    color: #012970;
+`;
+
+const Button = styled.button`
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+
+  &.primary {
+    background-color: #0d6efd;
+    color: white;
   }
-  
-  .upload-area {
-    border: 2px dashed #ddd;
+
+  &.secondary {
+    background-color: #6c757d;
+    color: white;
+  }
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+`;
+
+const FileInput = styled.div`
+  input[type="file"] {
+    display: none;
+  }
+
+  .file-label {
+    padding: 8px 16px;
+    background-color: #e9ecef;
+    border: 1px solid #ddd;
     border-radius: 4px;
-    padding: 20px;
-    text-align: center;
     cursor: pointer;
-    
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+
     &:hover {
-      border-color: #4154f1;
+      background-color: #dee2e6;
     }
-    
-    p {
-      margin: 0;
-      color: #899bbd;
-    }
+  }
+
+  .file-name {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #6c757d;
   }
 `;
 
 const InputSuratKeluarPage = () => {
   const navigate = useNavigate();
-  const { authUser } = useSelector((state) => state);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
-    tertuju: '',
+    nomor_surat: '',
+    tanggal_surat: '',
+    tanggal_kirim: '',
+    ditujukan_kepada: '',
     perihal: '',
-    nomor: '',
-    tanggal: '',
-    isi: '',
+    keterangan: '',
     file: null
   });
   const [errors, setErrors] = useState({});
-  
+
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: files ? files[0] : value
+      [name]: value
     }));
-    
     // Clear error when field is edited
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
-        [name]: ''
+        [name]: null
       }));
     }
   };
-  
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData(prev => ({
+        ...prev,
+        file
+      }));
+    }
+  };
+
   const validateForm = () => {
     const newErrors = {};
+    const requiredFields = ['nomor_surat', 'tanggal_surat', 'tanggal_kirim', 'ditujukan_kepada', 'perihal'];
     
-    if (!formData.tertuju) newErrors.tertuju = 'Tertuju harus diisi';
-    if (!formData.perihal) newErrors.perihal = 'Perihal harus diisi';
-    if (!formData.nomor) newErrors.nomor = 'Nomor surat harus diisi';
-    if (!formData.tanggal) newErrors.tanggal = 'Tanggal harus diisi';
-    if (!formData.isi) newErrors.isi = 'Isi surat harus diisi';
-    
+    requiredFields.forEach(field => {
+      if (!formData[field]) {
+        newErrors[field] = 'Field ini wajib diisi';
+      }
+    });
+
+    if (!formData.file) {
+      newErrors.file = 'File surat harus diupload';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (validateForm()) {
-      // TODO: Submit form data to API
-      console.log('Form data:', formData);
+    if (!validateForm()) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      const formDataToSend = new FormData();
+      Object.keys(formData).forEach(key => {
+        if (formData[key] !== null) {
+          formDataToSend.append(key, formData[key]);
+        }
+      });
+
+      const response = await _fetchWithAuth(`${BASE_URL}/surat-keluar/`, {
+        method: 'POST',
+        body: formDataToSend
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Gagal membuat surat keluar');
+      }
+
       navigate('/surat-keluar');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
-  
+
   return (
     <Layout>
       <Card>
-        <Header>
-          <h5>Input Surat Keluar</h5>
-          <ActionButtons>
-            <Button className="secondary" onClick={() => navigate(-1)}>
-              <FaArrowLeft /> Kembali
-            </Button>
-          </ActionButtons>
-        </Header>
+        <h2>Input Surat Keluar</h2>
+        {error && <div className="error-message">{error}</div>}
         
         <Form onSubmit={handleSubmit}>
-          <div>
-            <FormGroup>
-              <label htmlFor="tertuju">Tertuju</label>
-              <input
-                type="text"
-                id="tertuju"
-                name="tertuju"
-                value={formData.tertuju}
-                onChange={handleChange}
-                placeholder="Masukkan nama penerima surat"
-              />
-              {errors.tertuju && <div className="error">{errors.tertuju}</div>}
-            </FormGroup>
-            
-            <FormGroup>
-              <label htmlFor="perihal">Perihal</label>
-              <input
-                type="text"
-                id="perihal"
-                name="perihal"
-                value={formData.perihal}
-                onChange={handleChange}
-                placeholder="Masukkan perihal surat"
-              />
-              {errors.perihal && <div className="error">{errors.perihal}</div>}
-            </FormGroup>
-            
-            <FormGroup>
-              <label htmlFor="nomor">Nomor Surat</label>
-              <input
-                type="text"
-                id="nomor"
-                name="nomor"
-                value={formData.nomor}
-                onChange={handleChange}
-                placeholder="Masukkan nomor surat"
-              />
-              {errors.nomor && <div className="error">{errors.nomor}</div>}
-            </FormGroup>
-          </div>
-          
-          <div>
-            <FormGroup>
-              <label htmlFor="tanggal">Tanggal</label>
-              <input
-                type="date"
-                id="tanggal"
-                name="tanggal"
-                value={formData.tanggal}
-                onChange={handleChange}
-              />
-              {errors.tanggal && <div className="error">{errors.tanggal}</div>}
-            </FormGroup>
-            
-            <FormGroup>
-              <label htmlFor="isi">Isi Surat</label>
-              <textarea
-                id="isi"
-                name="isi"
-                value={formData.isi}
-                onChange={handleChange}
-                placeholder="Masukkan isi surat"
-              />
-              {errors.isi && <div className="error">{errors.isi}</div>}
-            </FormGroup>
-          </div>
-        </Form>
-        
-        <FileUpload>
-          <h6>Upload File Surat</h6>
-          <div className="upload-area" onClick={() => document.getElementById('file').click()}>
+          <FormGroup>
+            <label htmlFor="nomor_surat">Nomor Surat</label>
             <input
-              type="file"
-              id="file"
-              name="file"
+              type="text"
+              id="nomor_surat"
+              name="nomor_surat"
+              value={formData.nomor_surat}
               onChange={handleChange}
-              style={{ display: 'none' }}
-              accept=".pdf,.doc,.docx"
+              placeholder="Masukkan nomor surat"
             />
-            <p>
-              {formData.file ? formData.file.name : 'Klik untuk memilih file (PDF/DOC)'}
-            </p>
-          </div>
-        </FileUpload>
-        
-        <ActionButtons style={{ marginTop: '20px', justifyContent: 'flex-end' }}>
-          <Button
-            type="submit"
-            className="primary"
-            onClick={handleSubmit}
-          >
-            <FaSave /> Simpan
-          </Button>
-        </ActionButtons>
+            {errors.nomor_surat && <div className="error">{errors.nomor_surat}</div>}
+          </FormGroup>
+
+          <FormGroup>
+            <label htmlFor="tanggal_surat">Tanggal Surat</label>
+            <input
+              type="date"
+              id="tanggal_surat"
+              name="tanggal_surat"
+              value={formData.tanggal_surat}
+              onChange={handleChange}
+            />
+            {errors.tanggal_surat && <div className="error">{errors.tanggal_surat}</div>}
+          </FormGroup>
+
+          <FormGroup>
+            <label htmlFor="tanggal_kirim">Tanggal Kirim</label>
+            <input
+              type="date"
+              id="tanggal_kirim"
+              name="tanggal_kirim"
+              value={formData.tanggal_kirim}
+              onChange={handleChange}
+            />
+            {errors.tanggal_kirim && <div className="error">{errors.tanggal_kirim}</div>}
+          </FormGroup>
+
+          <FormGroup>
+            <label htmlFor="ditujukan_kepada">Ditujukan Kepada</label>
+            <input
+              type="text"
+              id="ditujukan_kepada"
+              name="ditujukan_kepada"
+              value={formData.ditujukan_kepada}
+              onChange={handleChange}
+              placeholder="Masukkan ditujukan kepada"
+            />
+            {errors.ditujukan_kepada && <div className="error">{errors.ditujukan_kepada}</div>}
+          </FormGroup>
+
+          <FormGroup>
+            <label htmlFor="perihal">Perihal</label>
+            <input
+              type="text"
+              id="perihal"
+              name="perihal"
+              value={formData.perihal}
+              onChange={handleChange}
+              placeholder="Masukkan perihal surat"
+            />
+            {errors.perihal && <div className="error">{errors.perihal}</div>}
+          </FormGroup>
+
+          <FormGroup>
+            <label htmlFor="keterangan">Keterangan</label>
+            <textarea
+              id="keterangan"
+              name="keterangan"
+              value={formData.keterangan}
+              onChange={handleChange}
+              placeholder="Masukkan keterangan (opsional)"
+            />
+          </FormGroup>
+
+          <FormGroup>
+            <label>File Surat</label>
+            <FileInput>
+              <label className="file-label">
+                <input
+                  type="file"
+                  onChange={handleFileChange}
+                  accept=".pdf,.doc,.docx"
+                />
+                Pilih File
+              </label>
+              {formData.file && (
+                <div className="file-name">{formData.file.name}</div>
+              )}
+            </FileInput>
+            {errors.file && <div className="error">{errors.file}</div>}
+          </FormGroup>
+
+          <ButtonGroup>
+            <Button type="submit" className="primary" disabled={loading}>
+              <FaSave /> Simpan
+            </Button>
+            <Button
+              type="button"
+              className="secondary"
+              onClick={() => navigate('/surat-keluar')}
+              disabled={loading}
+            >
+              <FaTimes /> Batal
+            </Button>
+          </ButtonGroup>
+        </Form>
       </Card>
     </Layout>
   );

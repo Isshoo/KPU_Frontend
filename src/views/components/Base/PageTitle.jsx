@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 
 const PageTitle = () => {
   const location = useLocation();
-  const { authUser } = useSelector((state) => state);
+  const authUser = useSelector((state) => state.authUser);
   
   const getPageTitle = () => {
     const path = location.pathname;

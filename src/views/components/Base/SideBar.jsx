@@ -88,12 +88,12 @@ const SideBar = () => {
           </Link>
         </NavItem>
         
-        <NavItem>
+        {/* <NavItem>
           <Link to="/kepala-sub-bagian" className={isActive('kepala-sub-bagian') ? 'active' : ''}>
             <FaUserCircle />
             <span>Kepala Sub Bagian</span>
           </Link>
-        </NavItem>
+        </NavItem> */}
       </NavList>
     </SidebarContainer>
   );

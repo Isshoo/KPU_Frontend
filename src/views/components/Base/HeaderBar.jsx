@@ -164,7 +164,7 @@ const DropdownMenu = styled.div`
 
 const HeaderBar = () => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const { authUser } = useSelector((state) => state);
+  const authUser = useSelector((state) => state.authUser);
   
   return (
     <HeaderContainer>

@@ -136,7 +136,7 @@ const DashboardPage = () => {
   });
   
   const [recentActivities, setRecentActivities] = useState([]);
-  const { authUser } = useSelector((state) => state);
+  const authUser = useSelector((state) => state.authUser);
   
   useEffect(() => {
     // TODO: Fetch dashboard data from API

@@ -97,7 +97,7 @@ const SearchBar = styled.div`
 
 const KepalaSubBagianPage = () => {
   const navigate = useNavigate();
-  const { authUser } = useSelector((state) => state);
+  const authUser = useSelector((state) => state.authUser);
   const [kepalaSubBagian, setKepalaSubBagian] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   

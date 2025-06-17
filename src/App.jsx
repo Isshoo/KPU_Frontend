@@ -16,6 +16,8 @@ import SuratKeluarPage from './views/pages/user/SuratKeluarPage';
 import DaftarAnggotaPage from './views/pages/user/DaftarAnggotaPage';
 import KepalaSubBagianPage from './views/pages/user/KepalaSubBagianPage';
 import ProfilPage from './views/pages/user/ProfilPage';
+// import InputAnggotaPage from './views/pages/user/InputAnggotaPage';
+import InputSuratMasukPage from './views/pages/user/InputSuratMasukPage';
 import InputSuratKeluarPage from './views/pages/user/InputSuratKeluarPage';
 import TemplateSuratPage from './views/pages/user/TemplateSuratPage';
 import DetailSuratPage from './views/pages/user/DetailSuratPage';
@@ -97,6 +99,7 @@ function App() {
                 {/* Staf Routes */}
                 {authUser.role === 'staf' && (
                   <>
+                    <Route path="/input-surat-masuk" element={<InputSuratMasukPage />} />
                     <Route path="/input-surat-keluar" element={<InputSuratKeluarPage />} />
                     <Route path="/template" element={<TemplateSuratPage />} />
                   </>

@@ -177,7 +177,7 @@ const DashboardPage = () => {
       ]);
 
       setStats(statsData.data);
-      setRecentSuratMasuk(suratMasukData.surat_list);
+      setRecentSuratMasuk(suratMasukData.data.surat_list);
       setRecentSuratKeluar(suratKeluarData.surat_list);
     } catch (err) {
       setError(err.message);

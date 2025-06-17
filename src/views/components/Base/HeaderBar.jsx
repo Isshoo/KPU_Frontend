@@ -131,7 +131,6 @@ const DropdownMenu = styled.div`
   border-radius: 4px;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
   min-width: 200px;
-  display: ${props => props.show ? 'block' : 'none'};
   
   .dropdown-header {
     padding: 10px 15px;
@@ -193,7 +192,8 @@ const HeaderBar = () => {
           <FaUser />
           <span>{authUser?.username}</span>
           
-          <DropdownMenu show={showProfileMenu}>
+          {showProfileMenu && (
+          <DropdownMenu>
             <div className="dropdown-header">
               <h6>{authUser?.username}</h6>
               <span>{authUser?.role}</span>
@@ -207,6 +207,7 @@ const HeaderBar = () => {
               <span>Keluar</span>
             </Link>
           </DropdownMenu>
+          )}
         </ProfileSection>
       </NavSection>
     </HeaderContainer>

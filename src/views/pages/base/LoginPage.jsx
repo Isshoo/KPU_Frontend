@@ -4,7 +4,6 @@ import LoginInput from '../../components/Base/auth/LoginInput';
 import { LocaleConsumer } from '../../../contexts/LocaleContext';
 import { useDispatch } from 'react-redux';
 import { asyncSetAuthUser } from '../../../states/authUser/action';
-import '../../../views/styles/Base/login.css';
 
 function LoginPage() {
   const dispatch = useDispatch();

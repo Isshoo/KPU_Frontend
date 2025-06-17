@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { FaBell, FaSearch, FaUser } from 'react-icons/fa';
+import { asyncUnsetAuthUser } from '../../../states/authUser/action';
 
 const HeaderContainer = styled.header`
   position: fixed;
@@ -165,6 +166,10 @@ const DropdownMenu = styled.div`
 const HeaderBar = () => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const authUser = useSelector((state) => state.authUser);
+  const dispatch = useDispatch();
+  const onSignOut = () => {
+    dispatch(asyncUnsetAuthUser());
+  };
   
   return (
     <HeaderContainer>
@@ -202,7 +207,7 @@ const HeaderBar = () => {
               <FaUser />
               <span>Profil</span>
             </Link>
-            <Link to="/logout" className="dropdown-item">
+            <Link to="/" className="dropdown-item" onClick={onSignOut}>
               <FaUser />
               <span>Keluar</span>
             </Link>

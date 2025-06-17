@@ -42,7 +42,7 @@ function asyncSetAuthUser({ username, password }) {
 function asyncUnsetAuthUser() {
   return (dispatch) => {
     dispatch(unsetAuthUserActionCreator());
-    api.putAccessToken('');
+    putAccessToken('');
   };
 }
 

@@ -29,6 +29,17 @@ const PageTitle = () => {
             <Link to="/template" className="btn btn-secondary">Template Surat Keluar</Link>
           </div>
         )}
+        {authUser?.role === 'staf' && location.pathname.includes('surat-masuk') && (
+          <div className="action-buttons">
+            <Link to="/input-surat-masuk" className="btn btn-warning">+ Surat Masuk</Link>
+          </div>
+        )}
+        {authUser?.role === 'sekertaris' && location.pathname.includes('daftar-anggota') && (
+          <div className="action-buttons">
+            <Link to="/input-anggota" className="btn btn-warning">+ Anggota</Link>
+          </div>
+        )}
+
       </nav>
     </div>
   );

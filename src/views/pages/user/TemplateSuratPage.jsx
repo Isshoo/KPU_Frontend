@@ -80,7 +80,7 @@ const Table = styled.table`
 
 const TemplateSuratPage = () => {
   const navigate = useNavigate();
-  const { authUser } = useSelector((state) => state);
+  const authUser = useSelector((state) => state.authUser);
   const [templates, setTemplates] = useState([]);
   
   useEffect(() => {

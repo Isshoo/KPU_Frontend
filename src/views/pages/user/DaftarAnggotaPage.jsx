@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, memo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { FaEye, FaEdit, FaTrash, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaEye, FaEdit, FaTrash, FaChevronLeft, FaChevronRight, FaSearch, FaPlus } from 'react-icons/fa';
 import Layout from '../../components/Base/Layout';
 import { BASE_URL } from '../../../globals/config';
 import { _fetchWithAuth } from '../../../utils/auth_helper';
+import debounce from 'lodash/debounce';
 
 const Card = styled.div`
   background: #fff;
@@ -15,10 +16,26 @@ const Card = styled.div`
   margin-bottom: 20px;
 `;
 
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
+const Title = styled.h1`
+  font-size: 24px;
+  color: #333;
+`;
+
 const SearchBar = styled.div`
   margin-bottom: 20px;
-  
-  input {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 10px;
+  align-items: center;
+
+  input, select {
     width: 100%;
     padding: 8px 12px;
     border: 1px solid #ddd;
@@ -29,6 +46,24 @@ const SearchBar = styled.div`
       outline: none;
       border-color: #4154f1;
     }
+  }
+`;
+
+const AddButton = styled.button`
+  padding: 8px 16px;
+  background-color: #198754;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    opacity: 0.9;
   }
 `;
 
@@ -157,29 +192,96 @@ const DivisiBadge = styled.span`
   color: #7b1fa2;
 `;
 
+const SearchBarComponent = memo(({ searchInput, onSearch, onFilterChange, role, divisi }) => {
+  const inputRef = useRef(null);
+  
+  const debouncedSetSearchTerm = useCallback(
+    debounce((value) => {
+      onSearch(value);
+    }, 500),
+    [onSearch]
+  );
+
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    debouncedSetSearchTerm(value);
+  };
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
+
+  return (
+    <SearchBar>
+      <input
+        ref={inputRef}
+        type="text"
+        placeholder="Cari berdasarkan nama atau username..."
+        defaultValue={searchInput}
+        onChange={handleSearch}
+      />
+      <select
+        value={role}
+        onChange={(e) => onFilterChange('role', e.target.value)}
+      >
+        <option value="">Semua Role</option>
+        <option value="sekertaris">Sekertaris</option>
+        <option value="kasub">Kepala Sub Bagian</option>
+        <option value="staf">Staf</option>
+      </select>
+      <select
+        value={divisi}
+        onChange={(e) => onFilterChange('divisi', e.target.value)}
+      >
+        <option value="">Semua Divisi</option>
+        <option value="teknis_dan_hukum">Teknis dan Hukum</option>
+        <option value="data_dan_informasi">Data dan Informasi</option>
+        <option value="logistik_dan_keuangan">Logistik dan Keuangan</option>
+        <option value="sdm_dan_parmas">SDM dan Parmas</option>
+      </select>
+    </SearchBar>
+  );
+});
+
 const DaftarAnggotaPage = () => {
   const navigate = useNavigate();
   const [anggota, setAnggota] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchInput, setSearchInput] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [role, setRole] = useState('');
+  const [divisi, setDivisi] = useState('');
   const [pagination, setPagination] = useState({
     page: 1,
     per_page: 10,
     total: 0,
     total_pages: 0
   });
-  const [searchTerm, setSearchTerm] = useState('');
   const authUser = useSelector((state) => state.authUser);
 
   const fetchAnggota = async (page = 1) => {
     try {
       setLoading(true);
-      const response = await _fetchWithAuth(`${BASE_URL}/users/?page=${page}`);
+      let url = `${BASE_URL}/users/?page=${page}`;
+      
+      if (searchTerm) {
+        url += `&search=${encodeURIComponent(searchTerm)}`;
+      }
+      if (role) {
+        url += `&role=${role}`;
+      }
+      if (divisi) {
+        url += `&divisi=${divisi}`;
+      }
+
+      const response = await _fetchWithAuth(url);
       if (!response.ok) {
         throw new Error('Failed to fetch anggota');
       }
       const data = await response.json();
-      console.log(data);
       setAnggota(data.users);
       setPagination(data.pagination);
     } catch (err) {
@@ -191,6 +293,21 @@ const DaftarAnggotaPage = () => {
 
   useEffect(() => {
     fetchAnggota();
+  }, [searchTerm, role, divisi]);
+
+  const handleSearch = useCallback((value) => {
+    setSearchInput(value);
+    setSearchTerm(value);
+    setPagination(prev => ({ ...prev, page: 1 }));
+  }, []);
+
+  const handleFilterChange = useCallback((type, value) => {
+    if (type === 'role') {
+      setRole(value);
+    } else if (type === 'divisi') {
+      setDivisi(value);
+    }
+    setPagination(prev => ({ ...prev, page: 1 }));
   }, []);
 
   const handleView = (id) => {
@@ -262,44 +379,55 @@ const DaftarAnggotaPage = () => {
   return (
     <Layout>
       <Card>
-        <SearchBar>
-          <input
-            type="text"
-            placeholder="Cari berdasarkan nama, NIP, sub bagian, atau email..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </SearchBar>
+        {/* <Header>
+          <Title>Daftar Anggota</Title>
+          {authUser?.role === 'sekertaris' && (
+            <AddButton onClick={() => navigate('/anggota/input')}>
+              <FaPlus /> Input Anggota
+            </AddButton>
+          )}
+        </Header> */}
+
+        <SearchBarComponent
+          searchInput={searchInput}
+          onSearch={handleSearch}
+          onFilterChange={handleFilterChange}
+          role={role}
+          divisi={divisi}
+        />
+
         <Table>
           <thead>
             <tr>
               <TableHeader>Nama Lengkap</TableHeader>
-              <TableHeader>Username</TableHeader>
+              {authUser?.role === 'sekertaris' && (
+                <TableHeader>Username</TableHeader>
+              )}
               <TableHeader>Role</TableHeader>
               <TableHeader>Divisi</TableHeader>
-              <TableHeader>Aksi</TableHeader>
+              {authUser?.role === 'sekertaris' && (
+                <TableHeader>Aksi</TableHeader>
+              )}
             </tr>
           </thead>
           <tbody>
             {anggota.map((user) => (
               <tr key={user.id}>
                 <TableCell>{user.nama_lengkap}</TableCell>
-                <TableCell>{user.username}</TableCell>
+                {authUser?.role === 'sekertaris' && (
+                  <TableCell>{user.username}</TableCell>
+                )}
                 <TableCell>{getRoleBadge(user.role)}</TableCell>
                 <TableCell>
                   {user.divisi && <DivisiBadge>{getDivisiName(user.divisi)}</DivisiBadge>}
                 </TableCell>
-                <TableCell>
-                  <ActionButton className="primary" onClick={() => handleView(user.id)}>
-                    <FaEye /> Lihat
-                  </ActionButton>
-                  <ActionButton className="warning" onClick={() => handleEdit(user.id)}>
-                    <FaEdit /> Edit
-                  </ActionButton>
-                  <ActionButton className="danger" onClick={() => handleDelete(user.id)}>
-                    <FaTrash /> Hapus
-                  </ActionButton>
-                </TableCell>
+                {authUser?.role === 'sekertaris' && (
+                  <TableCell>
+                    <ActionButton className="danger" onClick={() => handleDelete(user.id)}>
+                      <FaTrash /> Hapus
+                    </ActionButton>
+                  </TableCell>
+                )}
               </tr>
             ))}
           </tbody>

@@ -14,6 +14,7 @@ import DashboardPage from './views/pages/user/DashboardPage';
 import SuratMasukPage from './views/pages/user/SuratMasukPage';
 import SuratKeluarPage from './views/pages/user/SuratKeluarPage';
 import DaftarAnggotaPage from './views/pages/user/DaftarAnggotaPage';
+import InputAnggotaPage from './views/pages/user/InputAnggotaPage';
 import KepalaSubBagianPage from './views/pages/user/KepalaSubBagianPage';
 import ProfilPage from './views/pages/user/ProfilPage';
 // import InputAnggotaPage from './views/pages/user/InputAnggotaPage';
@@ -94,6 +95,8 @@ function App() {
                 <Route path="/surat-keluar" element={<SuratKeluarPage />} />
                 <Route path="/surat-keluar/input" element={<InputSuratKeluarPage />} />
                 <Route path="/daftar-anggota" element={<DaftarAnggotaPage />} />
+                <Route path="/anggota" element={<DaftarAnggotaPage />} />
+                <Route path="/anggota/input" element={<InputAnggotaPage />} />
                 <Route path="/kepala-sub-bagian" element={<KepalaSubBagianPage />} />
                 <Route path="/profile/:id" element={<ProfilPage />} />
 

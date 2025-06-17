@@ -114,15 +114,15 @@ const TemplateSuratPage = () => {
     <Layout>
       <Card>
         <Header>
-          <h5>Template Surat</h5>
-          <ActionButtons>
+          <h5>Halaman ini masih dalam pengembangan</h5>
+          {/* <ActionButtons>
             <Button className="primary" onClick={() => navigate('/template-surat/tambah')}>
               <FaPlus /> Tambah Template
             </Button>
-          </ActionButtons>
+          </ActionButtons> */}
         </Header>
         
-        <Table>
+        {/* <Table>
           <thead>
             <tr>
               <th>Nama Template</th>
@@ -164,7 +164,7 @@ const TemplateSuratPage = () => {
               </tr>
             ))}
           </tbody>
-        </Table>
+        </Table> */}
       </Card>
     </Layout>
   );

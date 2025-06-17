@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { FaBell, FaSearch, FaUser } from 'react-icons/fa';
+import { FaBell, FaSearch, FaSignOutAlt, FaUser } from 'react-icons/fa';
 import { asyncUnsetAuthUser } from '../../../states/authUser/action';
 
 const HeaderContainer = styled.header`
@@ -89,7 +89,7 @@ const NotificationIcon = styled.div`
   justify-content: center;
 
   svg {
-    font-size: 20px;
+    font-size: 18px;
   }
   
   .badge {
@@ -115,7 +115,7 @@ const ProfileSection = styled.div`
   cursor: pointer;
 
   svg {
-    font-size: 18px;
+    font-size: 16px;
   }
   
   span {
@@ -127,7 +127,7 @@ const ProfileSection = styled.div`
 const DropdownMenu = styled.div`
   position: absolute;
   top: 100%;
-  right: 0;
+  right: 20px;
   background: white;
   border-radius: 4px;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
@@ -139,7 +139,7 @@ const DropdownMenu = styled.div`
     
     h6 {
       margin: 0;
-      font-size: 14px;
+      font-size: 16px;
       color: #012970;
     }
     
@@ -156,6 +156,15 @@ const DropdownMenu = styled.div`
     gap: 10px;
     color: #012970;
     text-decoration: none;
+    cursor: pointer;
+
+    svg {
+      font-size: 14px;
+    }
+    
+    span {
+      font-size: 14px;
+    }
     
     &:hover {
       background: #f6f9ff;
@@ -169,6 +178,34 @@ const HeaderBar = () => {
   const dispatch = useDispatch();
   const onSignOut = () => {
     dispatch(asyncUnsetAuthUser());
+  };
+
+  const getRoleName = (role) => {
+    switch (role) {
+      case 'sekertaris':
+        return 'Sekertaris';
+      case 'staf':
+        return 'Staf';
+      case 'kasub':
+        return 'Kepala Sub Bagian';
+      default:
+        return role;
+    }
+  };
+
+  const getDivisiName = (divisi) => {
+    switch (divisi) {
+      case 'teknis_dan_hukum':
+        return 'Teknis dan Hukum';
+      case 'data_dan_informasi':
+        return 'Data dan Informasi';
+      case 'logistik_dan_keuangan':
+        return 'Logistik dan Keuangan';
+      case 'sdm_dan_parmas':
+        return 'SDM dan Parmas';
+      default:
+        return divisi;
+    }
   };
   
   return (
@@ -188,27 +225,27 @@ const HeaderBar = () => {
       </SearchBar> */}
       
       <NavSection>
-        <NotificationIcon>
+        {/* <NotificationIcon>
           <FaBell />
           <span className="badge">3</span>
-        </NotificationIcon>
+        </NotificationIcon> */}
         
         <ProfileSection onClick={() => setShowProfileMenu(!showProfileMenu)}>
           <FaUser />
-          <span>{authUser?.username}</span>
+          <span>{authUser?.nama_lengkap}</span>
           
           {showProfileMenu && (
           <DropdownMenu>
             <div className="dropdown-header">
               <h6>{authUser?.username}</h6>
-              <span>{authUser?.role}</span>
+              <span>{getRoleName(authUser?.role)}</span> - <span>{getDivisiName(authUser?.divisi)}</span>
             </div>
-            <Link to={`/profile/${authUser?.id}`} className="dropdown-item">
+            {/* <Link to={`/profile/${authUser?.id}`} className="dropdown-item">
               <FaUser />
               <span>Profil</span>
-            </Link>
+            </Link> */}
             <Link to="/" className="dropdown-item" onClick={onSignOut}>
-              <FaUser />
+              <FaSignOutAlt />
               <span>Keluar</span>
             </Link>
           </DropdownMenu>

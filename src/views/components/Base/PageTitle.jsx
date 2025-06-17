@@ -8,10 +8,14 @@ const PageTitle = () => {
   
   const getPageTitle = () => {
     const path = location.pathname;
-    if (path.includes('surat-masuk')) return 'Surat Masuk';
-    if (path.includes('surat-keluar')) return 'Surat Keluar';
-    if (path.includes('daftar-anggota')) return 'Daftar Anggota';
-    if (path.includes('kepala-sub-bagian')) return 'Kepala Sub Bagian';
+    if (path === '/surat-masuk') return 'Surat Masuk';
+    if (path === '/surat-keluar') return 'Surat Keluar';
+    if (path === '/daftar-anggota') return 'Daftar Anggota';
+    if (path === '/kepala-sub-bagian') return 'Kepala Sub Bagian';
+    if (path === '/template') return 'Template Surat';
+    if (path === '/input-surat-masuk') return 'Input Surat Masuk';
+    if (path === '/input-surat-keluar') return 'Input Surat Keluar';
+    if (path === '/anggota/input') return 'Input Anggota';
     return 'Dashboard';
   };
 
@@ -20,7 +24,7 @@ const PageTitle = () => {
       <h1>{getPageTitle()}</h1>
       <nav>
         <ol className="breadcrumb">
-          <li><Link to="/">Menu</Link></li>
+          <li><Link to="/dashboard">Menu</Link></li>
           <li>{getPageTitle()}</li>
         </ol>
         {authUser?.role === 'staf' && location.pathname === '/surat-keluar' && (
@@ -32,6 +36,11 @@ const PageTitle = () => {
         {authUser?.role === 'staf' && location.pathname === '/input-surat-keluar' && (
           <div className="action-buttons">
             <Link to="/surat-keluar" className="btn btn-warning">Kembali</Link>
+          </div>
+        )}
+        {authUser?.role === 'staf' && location.pathname === '/template' && (
+          <div className="action-buttons">
+            <Link to="/surat-keluar" className="btn btn-secondary">Kembali</Link>
           </div>
         )}
 
@@ -46,9 +55,14 @@ const PageTitle = () => {
           </div>
         )}
 
-        {authUser?.role === 'sekertaris' && location.pathname.includes('daftar-anggota') && (
+        {authUser?.role === 'sekertaris' && location.pathname === '/daftar-anggota' && (
           <div className="action-buttons">
-            <Link to="/input-anggota" className="btn btn-warning">+ Anggota</Link>
+            <Link to="/anggota/input" className="btn btn-warning">+ Anggota</Link>
+          </div>
+        )}
+        {authUser?.role === 'sekertaris' && location.pathname === '/anggota/input' && (
+          <div className="action-buttons">
+            <Link to="/daftar-anggota" className="btn btn-warning">Kembali</Link>
           </div>
         )}
 

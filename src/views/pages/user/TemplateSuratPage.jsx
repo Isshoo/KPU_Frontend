@@ -387,14 +387,14 @@ const TemplateSuratPage = () => {
   return (
     <Layout>
       <Card>
-        <Header>
+        {/* <Header>
           <h5>Template Surat</h5>
           <ActionButtons>
             <Button className="primary" onClick={() => navigate('/surat-keluar')}>
               Kembali
             </Button>
           </ActionButtons>
-        </Header>
+        </Header> */}
         
         <Table>
           <thead>

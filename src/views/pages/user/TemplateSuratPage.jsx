@@ -1,9 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, memo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { FaPlus, FaEdit, FaTrash, FaEye, FaSave } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash, FaEye, FaSave, FaCheck, FaTimes, FaDownload, FaUpload } from 'react-icons/fa';
+import { debounce } from 'lodash';
 import Layout from '../../components/Base/Layout';
+import { BASE_URL } from '../../../globals/config';
+import { _fetchWithAuth } from '../../../utils/auth_helper';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
+import html2pdf from 'html2pdf.js';
 
 const Card = styled.div`
   background: white;
@@ -27,38 +33,44 @@ const Header = styled.div`
 
 const ActionButtons = styled.div`
   display: flex;
-  gap: 10px;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 20px;
 `;
 
 const Button = styled.button`
   padding: 8px 16px;
   border-radius: 4px;
   border: none;
-  font-size: 14px;
-  font-weight: 500;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  
+  font-size: 14px;
+  transition: all 0.3s ease;
+
   &.primary {
-    background: #4154f1;
+    background-color: #0d6efd;
     color: white;
   }
-  
-  &.danger {
-    background: #dc3545;
-    color: white;
-  }
-  
+
   &.secondary {
-    background: #6c757d;
+    background-color: #6c757d;
     color: white;
   }
 
   &.success {
-    background: #198754;
+    background-color: #198754;
     color: white;
+  }
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
   }
 `;
 
@@ -144,7 +156,7 @@ const TextArea = styled.textarea`
 
 const TemplateSuratPage = () => {
   const navigate = useNavigate();
-  const authUser = useSelector((state) => state.authUser);
+  const user = useSelector((state) => state.authUser);
   const [templates, setTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [formData, setFormData] = useState({
@@ -155,6 +167,7 @@ const TemplateSuratPage = () => {
     perihal: '',
     keterangan: ''
   });
+  const previewRef = useRef(null);
   
   useEffect(() => {
     // TODO: Fetch templates from API
@@ -258,12 +271,119 @@ const TemplateSuratPage = () => {
   };
 
   const handleSave = async () => {
-    // TODO: Implement save functionality
-    console.log('Saving surat with data:', formData);
-    // Navigate back to surat keluar page after saving
-    navigate('/surat-keluar');
+    try {
+      if (!previewRef.current) {
+        throw new Error('Preview element not found');
+      }
+
+      // Generate PDF from preview
+      const canvas = await html2canvas(previewRef.current, {
+        scale: 2,
+        useCORS: true,
+        logging: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff'
+      });
+
+      // Calculate dimensions to fit A4
+      const imgWidth = 21; // A4 width in cm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      // Create PDF
+      const pdf = new jsPDF('p', 'cm', 'a4');
+      pdf.addImage(
+        canvas.toDataURL('image/jpeg', 1.0),
+        'JPEG',
+        1, // x position
+        1, // y position
+        imgWidth,
+        imgHeight
+      );
+
+      // Convert PDF to blob
+      const pdfBlob = pdf.output('blob');
+
+      // Create form data
+      const formDataToSend = new FormData();
+      formDataToSend.append('file', pdfBlob, 'surat.pdf');
+      formDataToSend.append('nomor_surat', formData.nomor_surat);
+      formDataToSend.append('tanggal_surat', formData.tanggal_surat);
+      formDataToSend.append('tanggal_kirim', formData.tanggal_kirim);
+      formDataToSend.append('ditujukan_kepada', formData.ditujukan_kepada);
+      formDataToSend.append('perihal', formData.perihal);
+      formDataToSend.append('keterangan', formData.keterangan || '');
+
+      // Log the form data for debugging
+      console.log('Sending form data:', {
+        nomor_surat: formData.nomor_surat,
+        tanggal_surat: formData.tanggal_surat,
+        tanggal_kirim: formData.tanggal_kirim,
+        ditujukan_kepada: formData.ditujukan_kepada,
+        perihal: formData.perihal,
+        keterangan: formData.keterangan
+      });
+
+      // Send to API
+      const response = await _fetchWithAuth(`${BASE_URL}/surat-keluar/`, {
+        method: 'POST',
+        body: formDataToSend
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to save surat');
+      }
+
+      // Show success message
+      alert('Surat berhasil disimpan');
+      
+      // Navigate back
+      navigate('/surat-keluar');
+    } catch (err) {
+      console.error('Error saving surat:', err);
+      alert('Gagal menyimpan surat: ' + err.message);
+    }
   };
-  
+
+  const handleDownload = async () => {
+    try {
+      if (!previewRef.current) {
+        throw new Error('Preview element not found. Please make sure the preview is loaded.');
+      }
+
+      // Create canvas from the element
+      const canvas = await html2canvas(previewRef.current, {
+        scale: 2,
+        useCORS: true,
+        logging: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff'
+      });
+
+      // Calculate dimensions to fit A4
+      const imgWidth = 21; // A4 width in cm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      // Create PDF
+      const pdf = new jsPDF('p', 'cm', 'a4');
+      pdf.addImage(
+        canvas.toDataURL('image/jpeg', 1.0),
+        'JPEG',
+        1, // x position
+        1, // y position
+        imgWidth,
+        imgHeight
+      );
+
+      // Save the PDF
+      pdf.save('surat.pdf');
+
+    } catch (err) {
+      console.error('Error downloading surat:', err);
+      alert('Gagal mengunduh surat. Silakan coba lagi.');
+    }
+  };
+
   return (
     <Layout>
       <Card>
@@ -294,14 +414,9 @@ const TemplateSuratPage = () => {
                 <td>{template.deskripsi}</td>
                 <td>{template.dibuat}</td>
                 <td>
-                  <ActionButtons>
-                    <Button
-                      className="primary"
-                      onClick={() => handleTemplateSelect(template)}
-                    >
-                      <FaEye /> Gunakan
-                    </Button>
-                  </ActionButtons>
+                  <Button className="primary" onClick={() => handleTemplateSelect(template)}>
+                    <FaCheck /> Gunakan
+                  </Button>
                 </td>
               </tr>
             ))}
@@ -309,9 +424,9 @@ const TemplateSuratPage = () => {
         </Table>
 
         {selectedTemplate && (
-          <TemplateEditor>
-            <EditorSection>
-              <h3>Form Input</h3>
+          <div className="template-editor">
+            <div className="editor-section">
+              <h3>Form Surat</h3>
               <FormGroup>
                 <Label>Nomor Surat</Label>
                 <Input
@@ -347,7 +462,7 @@ const TemplateSuratPage = () => {
                   name="ditujukan_kepada"
                   value={formData.ditujukan_kepada}
                   onChange={handleInputChange}
-                  placeholder="Masukkan nama penerima"
+                  placeholder="Masukkan ditujukan kepada"
                 />
               </FormGroup>
               <FormGroup>
@@ -362,22 +477,35 @@ const TemplateSuratPage = () => {
               </FormGroup>
               <FormGroup>
                 <Label>Keterangan</Label>
-                <TextArea
+                <Input
+                  as="textarea"
                   name="keterangan"
                   value={formData.keterangan}
                   onChange={handleInputChange}
-                  placeholder="Masukkan keterangan surat"
+                  placeholder="Masukkan keterangan (opsional)"
                 />
               </FormGroup>
-              <Button className="success" onClick={handleSave}>
-                <FaSave /> Simpan Surat
-              </Button>
-            </EditorSection>
-            <PreviewSection>
+              <ActionButtons>
+                <Button className="success" onClick={handleSave}>
+                  <FaUpload /> Upload ke Sistem
+                </Button>
+                <Button className="primary" onClick={handleDownload}>
+                  <FaDownload /> Download PDF
+                </Button>
+                <Button className="secondary" onClick={() => setSelectedTemplate(null)}>
+                  <FaTimes /> Batal
+                </Button>
+              </ActionButtons>
+            </div>
+            <div className="preview-section">
               <h3>Preview Surat</h3>
-              <div dangerouslySetInnerHTML={{ __html: generatePreview() }} />
-            </PreviewSection>
-          </TemplateEditor>
+              <div 
+                ref={previewRef}
+                className="preview-content" 
+                dangerouslySetInnerHTML={{ __html: generatePreview() }} 
+              />
+            </div>
+          </div>
         )}
       </Card>
     </Layout>

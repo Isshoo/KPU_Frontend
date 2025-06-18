@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { FaPlus, FaEdit, FaTrash, FaEye } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash, FaEye, FaSave } from 'react-icons/fa';
 import Layout from '../../components/Base/Layout';
 
 const Card = styled.div`
@@ -55,6 +55,11 @@ const Button = styled.button`
     background: #6c757d;
     color: white;
   }
+
+  &.success {
+    background: #198754;
+    color: white;
+  }
 `;
 
 const Table = styled.table`
@@ -78,10 +83,78 @@ const Table = styled.table`
   }
 `;
 
+const TemplateEditor = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 20px;
+`;
+
+const EditorSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+`;
+
+const PreviewSection = styled.div`
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 20px;
+  min-height: 500px;
+  background: white;
+`;
+
+const FormGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+`;
+
+const Label = styled.label`
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+`;
+
+const Input = styled.input`
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  
+  &:focus {
+    outline: none;
+    border-color: #4154f1;
+  }
+`;
+
+const TextArea = styled.textarea`
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  min-height: 100px;
+  resize: vertical;
+  
+  &:focus {
+    outline: none;
+    border-color: #4154f1;
+  }
+`;
+
 const TemplateSuratPage = () => {
   const navigate = useNavigate();
   const authUser = useSelector((state) => state.authUser);
   const [templates, setTemplates] = useState([]);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [formData, setFormData] = useState({
+    nomor_surat: '',
+    tanggal_surat: '',
+    tanggal_kirim: '',
+    ditujukan_kepada: '',
+    perihal: '',
+    keterangan: ''
+  });
   
   useEffect(() => {
     // TODO: Fetch templates from API
@@ -91,38 +164,119 @@ const TemplateSuratPage = () => {
         nama: 'Surat Undangan Rapat',
         jenis: 'Surat Keluar',
         deskripsi: 'Template untuk surat undangan rapat',
-        dibuat: '2024-03-20'
+        dibuat: '2024-03-20',
+        template: `
+          <div class="surat">
+            <div class="header">
+              <h2>KOMISI PEMILIHAN UMUM</h2>
+              <h3>KABUPATEN BANDUNG</h3>
+              <p>Jl. Raya Soreang No. 123</p>
+            </div>
+            <div class="nomor-surat">
+              Nomor: {{nomor_surat}}
+            </div>
+            <div class="tanggal">
+              {{tanggal_surat}}
+            </div>
+            <div class="penerima">
+              Kepada Yth.<br/>
+              {{ditujukan_kepada}}
+            </div>
+            <div class="perihal">
+              Perihal: {{perihal}}
+            </div>
+            <div class="isi">
+              {{keterangan}}
+            </div>
+          </div>
+        `
       },
       {
         id: 2,
         nama: 'Surat Tugas',
         jenis: 'Surat Keluar',
         deskripsi: 'Template untuk surat penugasan',
-        dibuat: '2024-03-19'
+        dibuat: '2024-03-19',
+        template: `
+          <div class="surat">
+            <div class="header">
+              <h2>KOMISI PEMILIHAN UMUM</h2>
+              <h3>KABUPATEN BANDUNG</h3>
+              <p>Jl. Raya Soreang No. 123</p>
+            </div>
+            <div class="nomor-surat">
+              Nomor: {{nomor_surat}}
+            </div>
+            <div class="tanggal">
+              {{tanggal_surat}}
+            </div>
+            <div class="penerima">
+              Kepada Yth.<br/>
+              {{ditujukan_kepada}}
+            </div>
+            <div class="perihal">
+              Perihal: {{perihal}}
+            </div>
+            <div class="isi">
+              {{keterangan}}
+            </div>
+          </div>
+        `
       }
     ]);
   }, []);
-  
-  const handleDelete = (id) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus template ini?')) {
-      // TODO: Delete template via API
-      setTemplates(prev => prev.filter(t => t.id !== id));
-    }
+
+  const handleTemplateSelect = (template) => {
+    setSelectedTemplate(template);
+    setFormData({
+      nomor_surat: '',
+      tanggal_surat: '',
+      tanggal_kirim: '',
+      ditujukan_kepada: '',
+      perihal: '',
+      keterangan: ''
+    });
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const generatePreview = () => {
+    if (!selectedTemplate) return '';
+    
+    let preview = selectedTemplate.template;
+    Object.entries(formData).forEach(([key, value]) => {
+      preview = preview.replace(new RegExp(`{{${key}}}`, 'g'), value);
+    });
+    
+    return preview;
+  };
+
+  const handleSave = async () => {
+    // TODO: Implement save functionality
+    console.log('Saving surat with data:', formData);
+    // Navigate back to surat keluar page after saving
+    navigate('/surat-keluar');
   };
   
   return (
     <Layout>
       <Card>
         <Header>
-          <h5>Halaman ini masih dalam pengembangan</h5>
-          {/* <ActionButtons>
-            <Button className="primary" onClick={() => navigate('/template-surat/tambah')}>
-              <FaPlus /> Tambah Template
+          <h5>Template Surat</h5>
+          <ActionButtons>
+            <Button className="primary" onClick={() => navigate('/surat-keluar')}>
+              Kembali
             </Button>
-          </ActionButtons> */}
+          </ActionButtons>
         </Header>
         
-        {/* <Table>
+        <Table>
           <thead>
             <tr>
               <th>Nama Template</th>
@@ -142,29 +296,89 @@ const TemplateSuratPage = () => {
                 <td>
                   <ActionButtons>
                     <Button
-                      className="secondary"
-                      onClick={() => navigate(`/template-surat/${template.id}`)}
-                    >
-                      <FaEye /> Lihat
-                    </Button>
-                    <Button
                       className="primary"
-                      onClick={() => navigate(`/template-surat/${template.id}/edit`)}
+                      onClick={() => handleTemplateSelect(template)}
                     >
-                      <FaEdit /> Edit
-                    </Button>
-                    <Button
-                      className="danger"
-                      onClick={() => handleDelete(template.id)}
-                    >
-                      <FaTrash /> Hapus
+                      <FaEye /> Gunakan
                     </Button>
                   </ActionButtons>
                 </td>
               </tr>
             ))}
           </tbody>
-        </Table> */}
+        </Table>
+
+        {selectedTemplate && (
+          <TemplateEditor>
+            <EditorSection>
+              <h3>Form Input</h3>
+              <FormGroup>
+                <Label>Nomor Surat</Label>
+                <Input
+                  type="text"
+                  name="nomor_surat"
+                  value={formData.nomor_surat}
+                  onChange={handleInputChange}
+                  placeholder="Masukkan nomor surat"
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label>Tanggal Surat</Label>
+                <Input
+                  type="date"
+                  name="tanggal_surat"
+                  value={formData.tanggal_surat}
+                  onChange={handleInputChange}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label>Tanggal Kirim</Label>
+                <Input
+                  type="date"
+                  name="tanggal_kirim"
+                  value={formData.tanggal_kirim}
+                  onChange={handleInputChange}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label>Ditujukan Kepada</Label>
+                <Input
+                  type="text"
+                  name="ditujukan_kepada"
+                  value={formData.ditujukan_kepada}
+                  onChange={handleInputChange}
+                  placeholder="Masukkan nama penerima"
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label>Perihal</Label>
+                <Input
+                  type="text"
+                  name="perihal"
+                  value={formData.perihal}
+                  onChange={handleInputChange}
+                  placeholder="Masukkan perihal surat"
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label>Keterangan</Label>
+                <TextArea
+                  name="keterangan"
+                  value={formData.keterangan}
+                  onChange={handleInputChange}
+                  placeholder="Masukkan keterangan surat"
+                />
+              </FormGroup>
+              <Button className="success" onClick={handleSave}>
+                <FaSave /> Simpan Surat
+              </Button>
+            </EditorSection>
+            <PreviewSection>
+              <h3>Preview Surat</h3>
+              <div dangerouslySetInnerHTML={{ __html: generatePreview() }} />
+            </PreviewSection>
+          </TemplateEditor>
+        )}
       </Card>
     </Layout>
   );

@@ -184,8 +184,8 @@ const TemplateSuratPage = () => {
   style="
     width: 210mm;
     min-height: 297mm;
-    padding: 1.27cm;
-    margin: 0 auto;
+    padding: 2.54cm;
+    margin: 0;
     border: 1px solid #000;
     box-sizing: border-box;
     font-family: 'Times New Roman', Times, serif;
@@ -338,16 +338,16 @@ const TemplateSuratPage = () => {
       });
 
       // Calculate dimensions to fit A4
-      const imgWidth = 21; // A4 width in cm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const imgWidth = 210; // A4 width in cm
+      const imgHeight = 297;
       
       // Create PDF
-      const pdf = new jsPDF('p', 'cm', 'a4');
+      const pdf = new jsPDF('p', 'mm', 'a4');
       pdf.addImage(
         canvas.toDataURL('image/jpeg', 1.0),
         'JPEG',
-        1, // x position
-        1, // y position
+        0, // x position
+        0, // y position
         imgWidth,
         imgHeight
       );
@@ -413,16 +413,16 @@ const TemplateSuratPage = () => {
       });
 
       // Calculate dimensions to fit A4
-      const imgWidth = 21; // A4 width in cm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const imgWidth = 210; // A4 width in cm
+      const imgHeight = 297;
       
       // Create PDF
-      const pdf = new jsPDF('p', 'cm', 'a4');
+      const pdf = new jsPDF('p', 'mm', 'a4');
       pdf.addImage(
         canvas.toDataURL('image/jpeg', 1.0),
         'JPEG',
-        1, // x position
-        1, // y position
+        0, // x position
+        0, // y position
         imgWidth,
         imgHeight
       );
@@ -549,7 +549,10 @@ const TemplateSuratPage = () => {
               <h3 style={{marginBottom: '20px' ,borderBottom: '1px solid #000', paddingBottom: '10px'}}>Preview Surat</h3>
               <div 
                 ref={previewRef}
-                className="preview-content" 
+                style={{
+                  margin: '0px',
+                  padding: '0px',
+                }}
                 dangerouslySetInnerHTML={{ __html: generatePreview() }} 
               />
             </div>

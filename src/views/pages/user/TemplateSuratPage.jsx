@@ -174,66 +174,118 @@ const TemplateSuratPage = () => {
     setTemplates([
       {
         id: 1,
-        nama: 'Surat Undangan Rapat',
-        jenis: 'Surat Keluar',
-        deskripsi: 'Template untuk surat undangan rapat',
-        dibuat: '2024-03-20',
-        template: `
-          <div class="surat">
-            <div class="header">
-              <h2>KOMISI PEMILIHAN UMUM</h2>
-              <h3>KABUPATEN BANDUNG</h3>
-              <p>Jl. Raya Soreang No. 123</p>
-            </div>
-            <div class="nomor-surat">
-              Nomor: {{nomor_surat}}
-            </div>
-            <div class="tanggal">
-              {{tanggal_surat}}
-            </div>
-            <div class="penerima">
-              Kepada Yth.<br/>
-              {{ditujukan_kepada}}
-            </div>
-            <div class="perihal">
-              Perihal: {{perihal}}
-            </div>
-            <div class="isi">
-              {{keterangan}}
-            </div>
-          </div>
-        `
-      },
-      {
-        id: 2,
         nama: 'Surat Tugas',
         jenis: 'Surat Keluar',
         deskripsi: 'Template untuk surat penugasan',
         dibuat: '2024-03-19',
         template: `
-          <div class="surat">
-            <div class="header">
-              <h2>KOMISI PEMILIHAN UMUM</h2>
-              <h3>KABUPATEN BANDUNG</h3>
-              <p>Jl. Raya Soreang No. 123</p>
-            </div>
-            <div class="nomor-surat">
-              Nomor: {{nomor_surat}}
-            </div>
-            <div class="tanggal">
-              {{tanggal_surat}}
-            </div>
-            <div class="penerima">
-              Kepada Yth.<br/>
-              {{ditujukan_kepada}}
-            </div>
-            <div class="perihal">
-              Perihal: {{perihal}}
-            </div>
-            <div class="isi">
-              {{keterangan}}
-            </div>
-          </div>
+<div 
+  class="surat" 
+  style="
+    width: 210mm;
+    min-height: 297mm;
+    padding: 1.27cm;
+    margin: 0 auto;
+    border: 1px solid #000;
+    box-sizing: border-box;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 12pt;
+    line-height: 1.5;
+  "
+>
+  <div 
+    class="header" 
+    style="
+      text-align: center; 
+      margin-bottom: 20px;
+    "
+  >
+  <img src="/logo_kpu.png" alt="KPU Logo" className="logo" style="width: 100px; height: 100px;"/>
+    <h2 style="margin: 0; font-size: 14pt; text-transform: uppercase;">
+      KOMISI PEMILIHAN UMUM KOTA MANADO
+    </h2>
+    <p style="margin: 5px 0 0 0;">Jalan Balai Kota No. 1, Manado, Sulawesi Utara 95111</p>
+    <p style="margin: 5px 0 0 0;">Telp. (0431) 841346 &nbsp;&nbsp; Fax. (0431) 841346</p>
+  </div>
+
+  <div 
+    class="info-surat" 
+    style="
+      margin-top: 30px; 
+      margin-bottom: 20px;
+    "
+  >
+    <p style="margin: 5px 0;"><strong>Nomor</strong> : {{nomor_surat}}</p>
+    <p style="margin: 5px 0;"><strong>Lampiran</strong> : {{lampiran}}</p>
+    <p style="margin: 5px 0;"><strong>Perihal</strong> : {{perihal}}</p>
+  </div>
+
+  <div 
+    class="tujuan-surat" 
+    style="
+      margin-bottom: 20px;
+    "
+  >
+    <p style="margin: 5px 0;">Kepada Yth.</p>
+    <p style="margin: 5px 0 5px 40px;">{{tujuan}}</p>
+    <p style="margin: 5px 0 5px 40px;">di-</p>
+    <p style="margin: 5px 0 5px 40px;">{{lokasi_tujuan}}</p>
+  </div>
+
+  <div 
+    class="isi-surat" 
+    style="
+      margin-bottom: 20px;
+      text-align: justify;
+    "
+  >
+    <p style="margin: 10px 0 10px 40px;">Dengan hormat,</p>
+    <p style="margin: 10px 0 10px 40px; text-indent: 0;">
+      Dalam rangka {{alasan}}, Komisi Pemilihan Umum Kota Manado akan menyelenggarakan
+      rapat koordinasi dengan agenda sebagai berikut:
+    </p>
+
+    <ul style="margin: 10px 0 10px 80px; padding-left: 20px;">
+      <li style="margin-bottom: 5px;"><strong>Hari/Tanggal:</strong> {{hari_tanggal}}</li>
+      <li style="margin-bottom: 5px;"><strong>Waktu:</strong> {{waktu}}</li>
+      <li style="margin-bottom: 5px;"><strong>Tempat:</strong> {{tempat}}</li>
+      <li style="margin-bottom: 5px;">
+        <strong>Agenda:</strong>
+        <ol style="margin: 5px 0 5px 20px; padding-left: 20px;">
+          <li>{{agenda_1}}</li>
+          <li>{{agenda_2}}</li>
+          <li>{{agenda_3}}</li>
+          <li>{{agenda_4}}</li>
+        </ol>
+      </li>
+    </ul>
+
+    <p style="margin: 10px 0 10px 40px; text-indent: 0;">
+      Mengingat pentingnya rapat ini, kami mengharapkan kehadiran {{penerima}} atau
+      perwakilan yang ditunjuk dengan membawa surat tugas, paling lambat
+      {{waktu_kedatangan}}.
+    </p>
+
+    <p style="margin: 10px 0 10px 40px; text-indent: 0;">
+      Demikian surat undangan ini kami sampaikan. Atas perhatian dan kerja sama
+      Bapak/Ibu/Saudara/i, kami ucapkan terima kasih.
+    </p>
+  </div>
+
+  <div 
+    class="penutup" 
+    style="
+      text-align: right; 
+      margin-top: 40px;
+    "
+  >
+    <p style="margin: 5px 0;">Manado, {{tanggal_surat}}</p>
+    <p style="margin: 5px 0;"><strong>Komisi Pemilihan Umum Kota Manado</strong></p>
+    <p style="margin: 60px 0 0 0;"><strong>Juan Johanis Derry</strong></p>
+    <p style="margin: 0;">NIP 19013008</p>
+  </div>
+</div>
+
         `
       }
     ]);
@@ -387,14 +439,6 @@ const TemplateSuratPage = () => {
   return (
     <Layout>
       <Card>
-        {/* <Header>
-          <h5>Template Surat</h5>
-          <ActionButtons>
-            <Button className="primary" onClick={() => navigate('/surat-keluar')}>
-              Kembali
-            </Button>
-          </ActionButtons>
-        </Header> */}
         
         <Table>
           <thead>
@@ -422,11 +466,15 @@ const TemplateSuratPage = () => {
             ))}
           </tbody>
         </Table>
+        <div>
+          {/* divider line */}
+          <div style={{ width: '100%', height: '1px', backgroundColor: '#000', margin: '20px 0' }}></div>
+        </div>
 
         {selectedTemplate && (
-          <div className="template-editor">
-            <div className="editor-section">
-              <h3>Form Surat</h3>
+          <div className="template-editor" style={{ display: 'flex', gap: '20px', marginTop: '20px', justifyContent: 'space-between' }}>
+            <div className="editor-section" style={{flex: 0.6}}>
+              <h3 style={{marginBottom: '20px' ,borderBottom: '1px solid #000', paddingBottom: '10px'}}>Form Surat</h3>
               <FormGroup>
                 <Label>Nomor Surat</Label>
                 <Input
@@ -497,8 +545,8 @@ const TemplateSuratPage = () => {
                 </Button>
               </ActionButtons>
             </div>
-            <div className="preview-section">
-              <h3>Preview Surat</h3>
+            <div className="preview-section" style={{flex: 1}}>
+              <h3 style={{marginBottom: '20px' ,borderBottom: '1px solid #000', paddingBottom: '10px'}}>Preview Surat</h3>
               <div 
                 ref={previewRef}
                 className="preview-content" 

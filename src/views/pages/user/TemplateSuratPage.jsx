@@ -284,7 +284,7 @@ const TemplateSuratPage = () => {
                   <p style="margin: 5px 0 2px;"><strong>Nomor</strong></p>
                 </td>
                 <td>
-                  <p style="margin: 5px 0 2px 30px;">: {{nomor_surat}}</p>
+                  <p style="margin: 5px 0 2px 30px;">: [Nomor Surat]</p>
                 </td>
               </tr>
               <tr>
@@ -292,7 +292,7 @@ const TemplateSuratPage = () => {
                   <p style="margin: 2px 0;"><strong>Lampiran</strong></p>
                 </td>
                 <td>
-                  <p style="margin: 2px 0 2px 30px;">: {{lampiran}}</p>
+                  <p style="margin: 2px 0 2px 30px;">: [Lampiran]</p>
                 </td>
               </tr>
               <tr>
@@ -300,7 +300,7 @@ const TemplateSuratPage = () => {
                   <p style="margin: 2px 0;"><strong>Perihal</strong></p>
                 </td>
                 <td>
-                  <p style="margin: 2px 0 2px 30px;">: {{perihal}}</p>
+                  <p style="margin: 2px 0 2px 30px;">: [Perihal]</p>
                 </td>
               </tr>
             </table>
@@ -313,9 +313,9 @@ const TemplateSuratPage = () => {
               "
             >
               <p style="margin: 5px 0 2px 0;">Kepada Yth.</p>
-              <p style="margin: 5px 0 2px 0;">{{tujuan}}</p>
+              <p style="margin: 5px 0 2px 0;">[Tujuan]</p>
               <p style="margin: 5px 0 2px 0;">di-</p>
-              <p style="margin: 2px 0 2px 0;">{{lokasi_tujuan}}</p>
+              <p style="margin: 2px 0 2px 0;">[Lokasi Tujuan]</p>
             </div>
 
             <div 
@@ -327,7 +327,7 @@ const TemplateSuratPage = () => {
             >
               <p style="margin: 10px 0 5px 0;">Dengan hormat,</p>
               <p style="margin: 5px 0; text-indent: 40px; line-height: 1.15;">
-                Dalam rangka {{alasan}}, Komisi Pemilihan Umum Kota Manado akan menyelenggarakan
+                Dalam rangka [Alasan], Komisi Pemilihan Umum Kota Manado akan menyelenggarakan
                 rapat koordinasi dengan agenda sebagai berikut:
               </p>
 
@@ -338,7 +338,7 @@ const TemplateSuratPage = () => {
                     <p style="margin-block: 5px;"><strong>Hari/Tanggal</strong></p>
                   </td>
                   <td>
-                    <p style="margin-left: 15px; margin-block: 5px;">: {{hari_tanggal}}</p>
+                    <p style="margin-left: 15px; margin-block: 5px;">: [Hari/Tanggal]</p>
                   </td>
                 </tr>
                 <tr>
@@ -346,7 +346,7 @@ const TemplateSuratPage = () => {
                     <p style="margin-block: 5px;"><strong>Waktu</strong></p>
                   </td>
                   <td>
-                    <p style="margin-left: 15px; margin-block: 5px;">: {{waktu}}</p>
+                    <p style="margin-left: 15px; margin-block: 5px;">: [Waktu]</p>
                   </td>
                 </tr>
                 <tr>
@@ -354,7 +354,7 @@ const TemplateSuratPage = () => {
                     <p style="margin-block: 5px;"><strong>Tempat</strong></p>
                   </td>
                   <td>
-                    <p style="margin-left: 15px; margin-block: 5px;">: {{tempat}}</p>
+                    <p style="margin-left: 15px; margin-block: 5px;">: [Tempat]</p>
                   </td>
                 </tr>
                 <tr>
@@ -364,10 +364,10 @@ const TemplateSuratPage = () => {
                   <td style="vertical-align: top; display: flex; gap: 5px;">
                     <p style="margin-left: 15px; margin-block: 5px;">:</p>
                     <ul style="margin-block: 5px; display: flex; flex-direction: column; gap: 5px;">
-                      <li> {{agenda_1}}</li>
-                      <li> {{agenda_2}}</li>
-                      <li> {{agenda_3}}</li>
-                      <li> {{agenda_4}}</li>
+                      <li> [Agenda 1]</li>
+                      <li> [Agenda 2]</li>
+                      <li> [Agenda 3]</li>
+                      <li> [Agenda 4]</li>
                     </ul>
                   </td>
                 </tr>
@@ -375,9 +375,9 @@ const TemplateSuratPage = () => {
               </div>
 
               <p style="margin: 10px 0; text-indent: 0; line-height: 1.15;">
-                Mengingat pentingnya rapat ini, kami mengharapkan kehadiran {{penerima}} atau
+                Mengingat pentingnya rapat ini, kami mengharapkan kehadiran [Penerima] atau
                 perwakilan yang ditunjuk dengan membawa surat tugas, paling lambat
-                {{waktu_kedatangan}}.
+                [Waktu Kedatangan].
               </p>
 
               <p style="margin: 10px 0; text-indent: 0; line-height: 1.15;">
@@ -393,16 +393,16 @@ const TemplateSuratPage = () => {
                 margin-top: 40px;
               "
             >
-              <p style="margin: 5px 0;">Manado, {{tanggal_surat}}</p>
+              <p style="margin: 5px 0;">Manado, [Tanggal Surat]</p>
               <p style="margin: 5px 0; font-weight: bold;">Komisi Pemilihan Umum Kota Manado</p>
-              <p style="margin: 5px 0;"><strong>{{jabatan_penandatangan}}</strong></p>
+              <p style="margin: 5px 0;"><strong>[Jabatan Penandatangan]</strong></p>
               <div style="display: flex; flex-direction: column; align-items: end; gap: 10px; justify-content: flex-end; margin-top: 5px;">
                 <div style="display: flex; flex-direction: column; align-items: end; gap: 5px;">
                   <div style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; align-self: center;">
-                    <img src="{{tanda_tangan}}" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                    <img src="[Tanda Tangan]" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
                   </div>
                   <div style="display: flex; flex-direction: column; align-items: end; gap: 10px; justify-content: flex-end;">
-                    <p style="margin: 0;"><strong>{{nama_penandatangan}}</strong></p>
+                    <p style="margin: 0;"><strong>[Nama Penandatangan]</strong></p>
                   </div>
                 </div>
               </div>
@@ -481,7 +481,7 @@ const TemplateSuratPage = () => {
                   <p style="margin: 5px 0 2px;"><strong>Nomor</strong></p>
                 </td>
                 <td>
-                  <p style="margin: 5px 0 2px 30px;">: {{nomor_surat}}</p>
+                  <p style="margin: 5px 0 2px 30px;">: [Nomor Surat]</p>
                 </td>
               </tr>
               <tr>
@@ -489,7 +489,7 @@ const TemplateSuratPage = () => {
                   <p style="margin: 2px 0;"><strong>Perihal</strong></p>
                 </td>
                 <td>
-                  <p style="margin: 2px 0 2px 30px;">: {{perihal}}</p>
+                  <p style="margin: 2px 0 2px 30px;">: [Perihal]</p>
                 </td>
               </tr>
             </table>
@@ -515,7 +515,7 @@ const TemplateSuratPage = () => {
                     <p style="margin-block: 5px;"><strong>Nama</strong></p>
                   </td>
                   <td>
-                    <p style="margin-left: 15px; margin-block: 5px;">: {{nama_petugas}}</p>
+                    <p style="margin-left: 15px; margin-block: 5px;">: [Nama Petugas]</p>
                   </td>
                 </tr>
                 <tr>
@@ -523,7 +523,7 @@ const TemplateSuratPage = () => {
                     <p style="margin-block: 5px;"><strong>Jabatan</strong></p>
                   </td>
                   <td>
-                    <p style="margin-left: 15px; margin-block: 5px;">: {{jabatan_petugas}}</p>
+                    <p style="margin-left: 15px; margin-block: 5px;">: [Jabatan Petugas]</p>
                   </td>
                 </tr>
                 <tr>
@@ -531,7 +531,7 @@ const TemplateSuratPage = () => {
                     <p style="margin-block: 5px;"><strong>Tugas</strong></p>
                   </td>
                   <td style="vertical-align: top;">
-                    <p style="margin-left: 15px; margin-block: 5px;">: {{tugas}}</p>
+                    <p style="margin-left: 15px; margin-block: 5px;">: [Tugas]</p>
                   </td>
                 </tr>
                 <tr>
@@ -539,7 +539,7 @@ const TemplateSuratPage = () => {
                     <p style="margin-block: 5px;"><strong>Lokasi</strong></p>
                   </td>
                   <td>
-                    <p style="margin-left: 15px; margin-block: 5px;">: {{lokasi_tugas}}</p>
+                    <p style="margin-left: 15px; margin-block: 5px;">: [Lokasi Tugas]</p>
                   </td>
                 </tr>
                 <tr>
@@ -547,7 +547,7 @@ const TemplateSuratPage = () => {
                     <p style="margin-block: 5px;"><strong>Waktu</strong></p>
                   </td>
                   <td>
-                    <p style="margin-left: 15px; margin-block: 5px;">: {{waktu_tugas}}</p>
+                    <p style="margin-left: 15px; margin-block: 5px;">: [Waktu Tugas]</p>
                   </td>
                 </tr>
                 <tr>
@@ -555,14 +555,14 @@ const TemplateSuratPage = () => {
                     <p style="margin-block: 5px;"><strong>Durasi</strong></p>
                   </td>
                   <td>
-                    <p style="margin-left: 15px; margin-block: 5px;">: {{durasi_tugas}}</p>
+                    <p style="margin-left: 15px; margin-block: 5px;">: [Durasi Tugas]</p>
                   </td>
                 </tr>
               </table>
               </div>
 
               <p style="margin: 10px 0; text-indent: 40px; line-height: 1.15;">
-                {{bekal_tugas}}
+                [Bekal Tugas]
               </p>
 
               <p style="margin: 10px 0; text-indent: 0; line-height: 1.15;">
@@ -577,16 +577,16 @@ const TemplateSuratPage = () => {
                 margin-top: 40px;
               "
             >
-              <p style="margin: 5px 0;">Manado, {{tanggal_surat}}</p>
+              <p style="margin: 5px 0;">Manado, [Tanggal Surat]</p>
               <p style="margin: 5px 0; font-weight: bold;">Komisi Pemilihan Umum Kota Manado</p>
-              <p style="margin: 5px 0;"><strong>{{jabatan_penandatangan}}</strong></p>
+              <p style="margin: 5px 0;"><strong>[Jabatan Penandatangan]</strong></p>
               <div style="display: flex; flex-direction: column; align-items: end; gap: 10px; justify-content: flex-end; margin-top: 5px;">
                 <div style="display: flex; flex-direction: column; align-items: end; gap: 5px;">
                   <div style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; align-self: center;">
-                    <img src="{{tanda_tangan}}" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                    <img src="[Tanda Tangan]" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
                   </div>
                   <div style="display: flex; flex-direction: column; align-items: end; gap: 10px; justify-content: flex-end;">
-                    <p style="margin: 0;"><strong>{{nama_penandatangan}}</strong></p>
+                    <p style="margin: 0;"><strong>[Nama Penandatangan]</strong></p>
                   </div>
                 </div>
               </div>
@@ -660,8 +660,46 @@ const TemplateSuratPage = () => {
     if (!selectedTemplate) return '';
     
     let preview = selectedTemplate.template;
-    Object.entries(formData).forEach(([key, value]) => {
-      preview = preview.replace(new RegExp(`{{${key}}}`, 'g'), value);
+    
+    // Replace placeholders with actual data
+    const replacements = {
+      '[Nomor Surat]': formData.nomor_surat || '[Nomor Surat]',
+      '[Lampiran]': formData.lampiran || '[Lampiran]',
+      '[Perihal]': formData.perihal || '[Perihal]',
+      '[Tujuan]': formData.tujuan || '[Tujuan]',
+      '[Lokasi Tujuan]': formData.lokasi_tujuan || '[Lokasi Tujuan]',
+      '[Alasan]': formData.alasan || '[Alasan]',
+      '[Hari/Tanggal]': formData.hari_tanggal || '[Hari/Tanggal]',
+      '[Waktu]': formData.waktu || '[Waktu]',
+      '[Tempat]': formData.tempat || '[Tempat]',
+      '[Agenda 1]': formData.agenda_1 || '[Agenda 1]',
+      '[Agenda 2]': formData.agenda_2 || '[Agenda 2]',
+      '[Agenda 3]': formData.agenda_3 || '[Agenda 3]',
+      '[Agenda 4]': formData.agenda_4 || '[Agenda 4]',
+      '[Penerima]': formData.penerima || '[Penerima]',
+      '[Waktu Kedatangan]': formData.waktu_kedatangan || '[Waktu Kedatangan]',
+      '[Tanggal Surat]': formData.tanggal_surat ? new Date(formData.tanggal_surat).toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      }) : '[Tanggal Surat]',
+      '[Jabatan Penandatangan]': formData.jabatan_penandatangan || '[Jabatan Penandatangan]',
+      '[Nama Penandatangan]': formData.nama_penandatangan || '[Nama Penandatangan]',
+      '[Tanda Tangan]': formData.tanda_tangan || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjRkZGRkZGIiBzdHJva2U9IiNDQ0NDQ0MiLz4KPHN2ZyB4PSIyMCIgeT0iMzAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjOTk5OTk5Ij4KPHBhdGggZD0iTTE5IDNoLTRWMWMwLS41NS0uNDUtMS0xLTFzLTEgLjQ1LTEgMXYySDhjLTEuMSAwLTIgLjktMiAydjE0YzAgMS4xLjkgMiAyIDJoMTJjMS4xIDAgMi0uOSAyLTJWNWMwLTEuMS0uOS0yLTItMnpNMTAgMTloLTJ2LTJoMnYyem0wLTZoLTJ2LTJoMnYyem0wLTZoLTJWN2gydjJ6bTQgMTJoLTJ2LTJoMnYyem0wLTZoLTJ2LTJoMnYyem0wLTZoLTJWN2gydjJ6bTQgMTJoLTJ2LTJoMnYyem0wLTZoLTJ2LTJoMnYyem0wLTZoLTJWN2gydjJ6Ii8+Cjwvc3ZnPgo8L3N2Zz4K',
+      
+      // Surat Tugas specific fields
+      '[Nama Petugas]': formData.nama_petugas || '[Nama Petugas]',
+      '[Jabatan Petugas]': formData.jabatan_petugas || '[Jabatan Petugas]',
+      '[Tugas]': formData.tugas || '[Tugas]',
+      '[Lokasi Tugas]': formData.lokasi_tugas || '[Lokasi Tugas]',
+      '[Waktu Tugas]': formData.waktu_tugas || '[Waktu Tugas]',
+      '[Durasi Tugas]': formData.durasi_tugas || '[Durasi Tugas]',
+      '[Bekal Tugas]': formData.bekal_tugas || '[Bekal Tugas]'
+    };
+    
+    // Apply all replacements
+    Object.entries(replacements).forEach(([placeholder, value]) => {
+      preview = preview.replace(new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), value);
     });
     
     return preview;

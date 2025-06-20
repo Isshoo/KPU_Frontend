@@ -179,112 +179,170 @@ const TemplateSuratPage = () => {
         deskripsi: 'Template untuk surat penugasan',
         dibuat: '2024-03-19',
         template: `
-<div 
-  class="surat" 
-  style="
-    width: 210mm;
-    min-height: 297mm;
-    padding: 2.54cm;
-    margin: 0;
-    border: 1px solid #000;
-    box-sizing: border-box;
-    font-family: 'Times New Roman', Times, serif;
-    font-size: 12pt;
-    line-height: 1.5;
-  "
->
-  <div 
-    class="header" 
-    style="
-      text-align: center; 
-      margin-bottom: 20px;
-    "
-  >
-  <img src="/logo_kpu.png" alt="KPU Logo" className="logo" style="width: 100px; height: 100px;"/>
-    <h2 style="margin: 0; font-size: 14pt; text-transform: uppercase;">
-      KOMISI PEMILIHAN UMUM KOTA MANADO
-    </h2>
-    <p style="margin: 5px 0 0 0;">Jalan Balai Kota No. 1, Manado, Sulawesi Utara 95111</p>
-    <p style="margin: 5px 0 0 0;">Telp. (0431) 841346 &nbsp;&nbsp; Fax. (0431) 841346</p>
-  </div>
+          <div 
+            class="surat" 
+            style="
+              width: 210mm;
+              min-height: 297mm;
+              padding: 2.54cm;
+              margin: 0;
+              border: 1px solid #000;
+              box-sizing: border-box;
+              font-family: 'Times New Roman', Times, serif;
+              font-size: 12pt;
+              line-height: 1.15;
+            "
+          >
+            <div 
+              class="header" 
+              style="
+                text-align: center; 
+                margin-bottom: 10px;
+                border-bottom: 1px solid #000;
+                padding-top: 80px;
+                padding-bottom: 10px;
+                position: relative;
+              "
+            >
+            <img src="/logo_kpu.png" alt="KPU Logo" className="logo" style="width: 90px; height: 90px; margin-bottom: 20px; position: absolute; top: -30px; left: 50%; transform: translateX(-50%);"/>
+              <h2 style="margin: 0; font-size: 14pt; text-transform: uppercase;">
+                KOMISI PEMILIHAN UMUM KOTA MANADO
+              </h2>
+              <p style="margin: 5px 0 0 0;">Jalan Balai Kota No. 1, Manado, Sulawesi Utara 95111</p>
+              <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                <p style="margin: 5px 0 0 0;">Telp. (0431) 841346</p>
+                <p style="margin: 5px 0 0 0;">Fax. (0431) 841346</p>
+              </div>
+            </div>
 
-  <div 
-    class="info-surat" 
-    style="
-      margin-top: 30px; 
-      margin-bottom: 20px;
-    "
-  >
-    <p style="margin: 5px 0;"><strong>Nomor</strong> : {{nomor_surat}}</p>
-    <p style="margin: 5px 0;"><strong>Lampiran</strong> : {{lampiran}}</p>
-    <p style="margin: 5px 0;"><strong>Perihal</strong> : {{perihal}}</p>
-  </div>
+            <div 
+              class="info-surat" 
+              style="
+                margin-top: 20px; 
+                margin-bottom: 20px;
+              "
+            >
+            <table>
+              <tr>
+                <td>
+                  <p style="margin: 5px 0 2px;"><strong>Nomor</strong></p>
+                </td>
+                <td>
+                  <p style="margin: 5px 0 2px 30px;">: {{nomor_surat}}</p>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <p style="margin: 2px 0;"><strong>Lampiran</strong></p>
+                </td>
+                <td>
+                  <p style="margin: 2px 0 2px 30px;">: {{lampiran}}</p>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <p style="margin: 2px 0;"><strong>Perihal</strong></p>
+                </td>
+                <td>
+                  <p style="margin: 2px 0 2px 30px;">: {{perihal}}</p>
+                </td>
+              </tr>
+            </table>
+            </div>
 
-  <div 
-    class="tujuan-surat" 
-    style="
-      margin-bottom: 20px;
-    "
-  >
-    <p style="margin: 5px 0;">Kepada Yth.</p>
-    <p style="margin: 5px 0 5px 40px;">{{tujuan}}</p>
-    <p style="margin: 5px 0 5px 40px;">di-</p>
-    <p style="margin: 5px 0 5px 40px;">{{lokasi_tujuan}}</p>
-  </div>
+            <div 
+              class="tujuan-surat" 
+              style="
+                margin-bottom: 20px;
+              "
+            >
+              <p style="margin: 5px 0 2px 0;">Kepada Yth.</p>
+              <p style="margin: 5px 0 2px 0;">{{tujuan}}</p>
+              <p style="margin: 5px 0 2px 0;">di-</p>
+              <p style="margin: 2px 0 2px 0;">{{lokasi_tujuan}}</p>
+            </div>
 
-  <div 
-    class="isi-surat" 
-    style="
-      margin-bottom: 20px;
-      text-align: justify;
-    "
-  >
-    <p style="margin: 10px 0 10px 40px;">Dengan hormat,</p>
-    <p style="margin: 10px 0 10px 40px; text-indent: 0;">
-      Dalam rangka {{alasan}}, Komisi Pemilihan Umum Kota Manado akan menyelenggarakan
-      rapat koordinasi dengan agenda sebagai berikut:
-    </p>
+            <div 
+              class="isi-surat" 
+              style="
+                margin-bottom: 20px;
+                text-align: justify;
+              "
+            >
+              <p style="margin: 10px 0 5px 0;">Dengan hormat,</p>
+              <p style="margin: 5px 0; text-indent: 40px; line-height: 1.15;">
+                Dalam rangka {{alasan}}, Komisi Pemilihan Umum Kota Manado akan menyelenggarakan
+                rapat koordinasi dengan agenda sebagai berikut:
+              </p>
 
-    <ul style="margin: 10px 0 10px 80px; padding-left: 20px;">
-      <li style="margin-bottom: 5px;"><strong>Hari/Tanggal:</strong> {{hari_tanggal}}</li>
-      <li style="margin-bottom: 5px;"><strong>Waktu:</strong> {{waktu}}</li>
-      <li style="margin-bottom: 5px;"><strong>Tempat:</strong> {{tempat}}</li>
-      <li style="margin-bottom: 5px;">
-        <strong>Agenda:</strong>
-        <ol style="margin: 5px 0 5px 20px; padding-left: 20px;">
-          <li>{{agenda_1}}</li>
-          <li>{{agenda_2}}</li>
-          <li>{{agenda_3}}</li>
-          <li>{{agenda_4}}</li>
-        </ol>
-      </li>
-    </ul>
+              <div style="margin: 10px 0; padding-left: 40px;">
+              <table>
+                <tr>
+                  <td>
+                    <p style="margin-block: 5px;"><strong>Hari/Tanggal</strong></p>
+                  </td>
+                  <td>
+                    <p style="margin-left: 15px; margin-block: 5px;">: {{hari_tanggal}}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <p style="margin-block: 5px;"><strong>Waktu</strong></p>
+                  </td>
+                  <td>
+                    <p style="margin-left: 15px; margin-block: 5px;">: {{waktu}}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <p style="margin-block: 5px;"><strong>Tempat</strong></p>
+                  </td>
+                  <td>
+                    <p style="margin-left: 15px; margin-block: 5px;">: {{tempat}}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="vertical-align: top;">
+                    <p style="margin-block: 5px;"><strong>Agenda</strong></p>
+                  </td>
+                  <td style="vertical-align: top; display: flex; gap: 5px;">
+                    <p style="margin-left: 15px; margin-block: 5px;">:</p>
+                    <ul style="margin-block: 5px; display: flex; flex-direction: column; gap: 5px;">
+                      <li> {{agenda_1}}</li>
+                      <li> {{agenda_2}}</li>
+                      <li> {{agenda_3}}</li>
+                      <li> {{agenda_4}}</li>
+                    </ul>
+                  </td>
+                </tr>
+              </table>
+              </div>
 
-    <p style="margin: 10px 0 10px 40px; text-indent: 0;">
-      Mengingat pentingnya rapat ini, kami mengharapkan kehadiran {{penerima}} atau
-      perwakilan yang ditunjuk dengan membawa surat tugas, paling lambat
-      {{waktu_kedatangan}}.
-    </p>
+              <p style="margin: 10px 0; text-indent: 0; line-height: 1.15;">
+                Mengingat pentingnya rapat ini, kami mengharapkan kehadiran {{penerima}} atau
+                perwakilan yang ditunjuk dengan membawa surat tugas, paling lambat
+                {{waktu_kedatangan}}.
+              </p>
 
-    <p style="margin: 10px 0 10px 40px; text-indent: 0;">
-      Demikian surat undangan ini kami sampaikan. Atas perhatian dan kerja sama
-      Bapak/Ibu/Saudara/i, kami ucapkan terima kasih.
-    </p>
-  </div>
+              <p style="margin: 10px 0; text-indent: 0; line-height: 1.15;">
+                Demikian surat undangan ini kami sampaikan. Atas perhatian dan kerja sama
+                Bapak/Ibu/Saudara/i, kami ucapkan terima kasih.
+              </p>
+            </div>
 
-  <div 
-    class="penutup" 
-    style="
-      text-align: right; 
-      margin-top: 40px;
-    "
-  >
-    <p style="margin: 5px 0;">Manado, {{tanggal_surat}}</p>
-    <p style="margin: 5px 0;"><strong>Komisi Pemilihan Umum Kota Manado</strong></p>
-    <p style="margin: 60px 0 0 0;"><strong>Juan Johanis Derry</strong></p>
-    <p style="margin: 0;">NIP 19013008</p>
-  </div>
-</div>
+            <div 
+              class="penutup" 
+              style="
+                text-align: right; 
+                margin-top: 40px;
+              "
+            >
+              <p style="margin: 5px 0;">Manado, {{tanggal_surat}}</p>
+              <p style="margin: 5px 0;"><strong>Komisi Pemilihan Umum Kota Manado</strong></p>
+              <p style="margin: 60px 0 0 0;"><strong>Juan Johanis Derry</strong></p>
+              <p style="margin: 0;">NIP 19013008</p>
+            </div>
+          </div>
 
         `
       }
@@ -555,6 +613,7 @@ const TemplateSuratPage = () => {
                 }}
                 dangerouslySetInnerHTML={{ __html: generatePreview() }} 
               />
+              
             </div>
           </div>
         )}

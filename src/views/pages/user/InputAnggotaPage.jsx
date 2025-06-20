@@ -137,7 +137,7 @@ const InputAnggotaPage = () => {
   const [formData, setFormData] = useState({
     nama_lengkap: '',
     role: '',
-    divisi: ''
+    divisi: null
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -151,7 +151,7 @@ const InputAnggotaPage = () => {
     if (!formData.role) {
       newErrors.role = 'Role harus dipilih';
     }
-    if (!formData.divisi) {
+    if (formData.role !== 'sekertaris' && !formData.divisi) {
       newErrors.divisi = 'Divisi harus dipilih';
     }
     setErrors(newErrors);
@@ -241,6 +241,7 @@ const InputAnggotaPage = () => {
             {errors.role && <ErrorMessage>{errors.role}</ErrorMessage>}
           </FormGroup>
 
+          {formData.role !== 'sekertaris' && (
           <FormGroup>
             <Label htmlFor="divisi">Divisi</Label>
             <Select
@@ -257,6 +258,7 @@ const InputAnggotaPage = () => {
             </Select>
             {errors.divisi && <ErrorMessage>{errors.divisi}</ErrorMessage>}
           </FormGroup>
+          )}
 
           {error && <ErrorMessage>{error}</ErrorMessage>}
 

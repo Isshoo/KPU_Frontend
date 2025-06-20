@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import LocaleContext from '../../../contexts/LocaleContext';
 import { useNavigate } from 'react-router-dom';
-import FooterBar from '../../components/Base/FooterBar';
 
 const NotFoundPage = () => {
   const { locale } = useContext(LocaleContext);
@@ -22,9 +21,6 @@ const NotFoundPage = () => {
           </button>
         </div>
       </div>
-      <footer className='footer'>
-        <FooterBar />
-      </footer>
     </>
   );
 };

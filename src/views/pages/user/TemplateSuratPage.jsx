@@ -185,10 +185,7 @@ const TemplateSuratPage = () => {
     hari_tanggal: '',
     waktu: '',
     tempat: '',
-    agenda_1: '',
-    agenda_2: '',
-    agenda_3: '',
-    agenda_4: '',
+    agenda_items: ['', '', '', ''],
     penerima: '',
     waktu_kedatangan: '',
     nama_petugas: '',
@@ -200,7 +197,7 @@ const TemplateSuratPage = () => {
     bekal_tugas: '',
     tanda_tangan: null,
     nama_penandatangan: '',
-    jabatan_penandatangan: '',
+    jabatan_penandatangan: ''
   });
   const previewRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -221,13 +218,10 @@ const TemplateSuratPage = () => {
           { name: 'tujuan', label: 'Tujuan', type: 'text', required: true },
           { name: 'lokasi_tujuan', label: 'Lokasi Tujuan', type: 'text', required: true },
           { name: 'alasan', label: 'Alasan', type: 'text', required: true },
-          { name: 'hari_tanggal', label: 'Hari/Tanggal', type: 'text', required: true },
+          { name: 'hari_tanggal', label: 'Hari/Tanggal', type: 'date', required: true },
           { name: 'waktu', label: 'Waktu', type: 'text', required: true },
           { name: 'tempat', label: 'Tempat', type: 'text', required: true },
-          { name: 'agenda_1', label: 'Agenda 1', type: 'text', required: true },
-          { name: 'agenda_2', label: 'Agenda 2', type: 'text', required: false },
-          { name: 'agenda_3', label: 'Agenda 3', type: 'text', required: false },
-          { name: 'agenda_4', label: 'Agenda 4', type: 'text', required: false },
+          { name: 'agenda_items', label: 'Agenda', type: 'dynamic_list', required: true },
           { name: 'penerima', label: 'Penerima', type: 'text', required: true },
           { name: 'waktu_kedatangan', label: 'Waktu Kedatangan', type: 'text', required: true },
           { name: 'tanggal_surat', label: 'Tanggal Surat', type: 'date', required: true },
@@ -365,10 +359,7 @@ const TemplateSuratPage = () => {
                   <td style="vertical-align: top; display: flex; gap: 5px;">
                     <p style="margin-left: 15px; margin-block: 5px;">:</p>
                     <ul style="margin-block: 5px; display: flex; flex-direction: column; gap: 5px;">
-                      <li> [Agenda 1]</li>
-                      <li> [Agenda 2]</li>
-                      <li> [Agenda 3]</li>
-                      <li> [Agenda 4]</li>
+                      [Agenda Items]
                     </ul>
                   </td>
                 </tr>
@@ -630,10 +621,7 @@ const TemplateSuratPage = () => {
       hari_tanggal: '',
       waktu: '',
       tempat: '',
-      agenda_1: '',
-      agenda_2: '',
-      agenda_3: '',
-      agenda_4: '',
+      agenda_items: ['', '', '', ''],
       penerima: '',
       waktu_kedatangan: '',
       nama_petugas: '',
@@ -680,6 +668,47 @@ const TemplateSuratPage = () => {
     }
   };
 
+  const handleAgendaChange = (index, value) => {
+    setFormData(prev => ({
+      ...prev,
+      agenda_items: prev.agenda_items.map((item, i) => 
+        i === index ? value : item
+      )
+    }));
+  };
+
+  const addAgendaItem = () => {
+    setFormData(prev => ({
+      ...prev,
+      agenda_items: [...prev.agenda_items, '']
+    }));
+  };
+
+  const removeAgendaItem = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      agenda_items: prev.agenda_items.filter((_, i) => i !== index)
+    }));
+  };
+
+  const formatIndonesianDate = (dateString) => {
+    if (!dateString) return '[Hari/Tanggal]';
+    
+    const date = new Date(dateString);
+    const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    const months = [
+      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ];
+    
+    const day = days[date.getDay()];
+    const dateNum = date.getDate();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    
+    return `${day}, ${dateNum} ${month} ${year}`;
+  };
+
   const generatePreview = () => {
     if (!selectedTemplate) return '';
     
@@ -693,23 +722,18 @@ const TemplateSuratPage = () => {
       '[Tujuan]': formData.tujuan || '[Tujuan]',
       '[Lokasi Tujuan]': formData.lokasi_tujuan || '[Lokasi Tujuan]',
       '[Alasan]': formData.alasan || '[Alasan]',
-      '[Hari/Tanggal]': formData.hari_tanggal || '[Hari/Tanggal]',
+      '[Hari/Tanggal]': formatIndonesianDate(formData.hari_tanggal),
       '[Waktu]': formData.waktu || '[Waktu]',
       '[Tempat]': formData.tempat || '[Tempat]',
-      '[Agenda 1]': formData.agenda_1 || '[Agenda 1]',
-      '[Agenda 2]': formData.agenda_2 || '[Agenda 2]',
-      '[Agenda 3]': formData.agenda_3 || '[Agenda 3]',
-      '[Agenda 4]': formData.agenda_4 || '[Agenda 4]',
+      '[Agenda Items]': formData.agenda_items?.map(item => 
+        `<li>${item || '[Agenda Item]'}</li>`
+      ).join('') || '<li>[Agenda Item]</li>',
       '[Penerima]': formData.penerima || '[Penerima]',
       '[Waktu Kedatangan]': formData.waktu_kedatangan || '[Waktu Kedatangan]',
-      '[Tanggal Surat]': formData.tanggal_surat ? new Date(formData.tanggal_surat).toLocaleDateString('id-ID', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-      }) : '[Tanggal Surat]',
+      '[Tanggal Surat]': formData.tanggal_surat ? formatIndonesianDate(formData.tanggal_surat) : '[Tanggal Surat]',
       '[Jabatan Penandatangan]': formData.jabatan_penandatangan || '[Jabatan Penandatangan]',
       '[Nama Penandatangan]': formData.nama_penandatangan || '[Nama Penandatangan]',
-      '[Tanda Tangan]': formData.tanda_tangan || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjRkZGRkZGIiBzdHJva2U9IiNDQ0NDQ0MiLz4KPHN2ZyB4PSIyMCIgeT0iMzAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjOTk5OTk5Ij4KPHBhdGggZD0iTTE5IDNoLTRWMWMwLS41NS0uNDUtMS0xLTFzLTEgLjQ1LTEgMXYySDhjLTEuMSAwLTIgLjktMiAydjE0YzAgMS4xLjkgMiAyIDJoMTJjMS4xIDAgMi0uOSAyLTJWNWMwLTEuMS0uOS0yLTItMnpNMTAgMTloLTJ2LTJoMnYyem0wLTZoLTJ2LTJoMnYyem0wLTZoLTJWN2gydjJ6bTQgMTJoLTJ2LTJoMnYyem0wLTZoLTJ2LTJoMnYyem0wLTZoLTJWN2gydjJ6bTQgMTJoLTJ2LTJoMnYyem0wLTZoLTJ2LTJoMnYyem0wLTZoLTJWN2gydjJ6Ii8+Cjwvc3ZnPgo8L3N2Zz4K',
+      '[Tanda Tangan]': formData.tanda_tangan || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjRkZGRkZGIiBzdHJva2U9IiNDQ0NDQ0MiLz4KPHN2ZyB4PSIyMCIgeT0iMzAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjOTk5OTk5Ij4KPHBhdGggZD0iTTE5IDNoLTRWMWMwLS41NS0uNDUtMS0xLTFzLTEgLjQ1LTEgMXYySDhjLTEuMSAwLTIgLjktMiAydjE0YzAgMS4xLjkgMiAyIDJoMTJjMS4xIDAgMi0uOSAyLTJWNWMwLTEuMS0uOS0yLTItMnpNMTAgMTloLTJ2LTJoMnYyem0wLTZoLTJ2LTJoMnYyem0wLTZoLTJWN2gydjJ6bTQgMTJoLTJ2LTJoMnYyem0wLTZoLTJ2LTJoMnYyem0wLTZoLTJWN2gydjJ6Ii8+Cjwvc3ZnPgo8L3N2Zz4K',
       
       // Surat Tugas specific fields
       '[Nama Petugas]': formData.nama_petugas || '[Nama Petugas]',
@@ -779,7 +803,7 @@ const TemplateSuratPage = () => {
       let keterangan = '';
       if (selectedTemplate.id === 1) {
         // Surat Undangan
-        keterangan = `Tujuan: ${formData.tujuan}\nLokasi: ${formData.lokasi_tujuan}\nAlasan: ${formData.alasan}\nHari/Tanggal: ${formData.hari_tanggal}\nWaktu: ${formData.waktu}\nTempat: ${formData.tempat}\nAgenda: ${formData.agenda_1}${formData.agenda_2 ? ', ' + formData.agenda_2 : ''}${formData.agenda_3 ? ', ' + formData.agenda_3 : ''}${formData.agenda_4 ? ', ' + formData.agenda_4 : ''}\nPenerima: ${formData.penerima}\nWaktu Kedatangan: ${formData.waktu_kedatangan}\n\nPenandatangan:\nNama: ${formData.nama_penandatangan}\nJabatan: ${formData.jabatan_penandatangan}`;
+        keterangan = `Tujuan: ${formData.tujuan}\nLokasi: ${formData.lokasi_tujuan}\nAlasan: ${formData.alasan}\nHari/Tanggal: ${formData.hari_tanggal}\nWaktu: ${formData.waktu}\nTempat: ${formData.tempat}\nAgenda: ${formData.agenda_items.join(', ')}\nPenerima: ${formData.penerima}\nWaktu Kedatangan: ${formData.waktu_kedatangan}\n\nPenandatangan:\nNama: ${formData.nama_penandatangan}\nJabatan: ${formData.jabatan_penandatangan}`;
       } else if (selectedTemplate.id === 2) {
         // Surat Tugas
         keterangan = `Nama Petugas: ${formData.nama_petugas}\nJabatan: ${formData.jabatan_petugas}\nTugas: ${formData.tugas}\nLokasi: ${formData.lokasi_tugas}\nWaktu: ${formData.waktu_tugas}\nDurasi: ${formData.durasi_tugas}${formData.bekal_tugas ? '\nBekal: ' + formData.bekal_tugas : ''}\n\nPenandatangan:\nNama: ${formData.nama_penandatangan}\nJabatan: ${formData.jabatan_penandatangan}`;
@@ -884,7 +908,7 @@ const TemplateSuratPage = () => {
               onChange={handleInputChange}
               accept={field.accept}
               required={field.required}
-              key={`${selectedTemplate.id}-${field.name}`} // Add key to force re-render
+              key={`${selectedTemplate.id}-${field.name}`}
             />
             {formData[field.name] && (
               <div style={{ marginTop: '10px' }}>
@@ -900,6 +924,51 @@ const TemplateSuratPage = () => {
                 />
               </div>
             )}
+          </div>
+        ) : field.type === 'dynamic_list' ? (
+          <div>
+            {formData.agenda_items?.map((item, index) => (
+              <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '5px', alignItems: 'center' }}>
+                <Input
+                  type="text"
+                  value={item}
+                  onChange={(e) => handleAgendaChange(index, e.target.value)}
+                  placeholder={`Agenda ${index + 1}`}
+                  style={{ flex: 1 }}
+                />
+                {formData.agenda_items.length > 1 && (
+                  <Button 
+                    type="button" 
+                    onClick={() => removeAgendaItem(index)}
+                    style={{ 
+                      padding: '5px 10px', 
+                      background: '#dc3545', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '4px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Hapus
+                  </Button>
+                )}
+              </div>
+            ))}
+            <Button 
+              type="button" 
+              onClick={addAgendaItem}
+              style={{ 
+                padding: '5px 10px', 
+                background: '#28a745', 
+                color: 'white', 
+                border: 'none', 
+                borderRadius: '4px',
+                cursor: 'pointer',
+                marginTop: '5px'
+              }}
+            >
+              + Tambah Agenda
+            </Button>
           </div>
         ) : field.type === 'textarea' ? (
           <TextArea
@@ -924,7 +993,34 @@ const TemplateSuratPage = () => {
   };
 
   const handleResetForm = () => {
-    setFormData({});
+    setFormData({
+      nomor_surat: '',
+      tanggal_surat: '',
+      tanggal_kirim: '',
+      ditujukan_kepada: '',
+      perihal: '',
+      keterangan: '',
+      lampiran: '',
+      tujuan: '',
+      lokasi_tujuan: '',
+      alasan: '',
+      hari_tanggal: '',
+      waktu: '',
+      tempat: '',
+      agenda_items: ['', '', '', ''],
+      penerima: '',
+      waktu_kedatangan: '',
+      nama_petugas: '',
+      jabatan_petugas: '',
+      tugas: '',
+      lokasi_tugas: '',
+      waktu_tugas: '',
+      durasi_tugas: '',
+      bekal_tugas: '',
+      tanda_tangan: null,
+      nama_penandatangan: '',
+      jabatan_penandatangan: ''
+    });
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }

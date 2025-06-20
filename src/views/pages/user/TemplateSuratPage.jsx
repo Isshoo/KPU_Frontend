@@ -217,7 +217,7 @@ const TemplateSuratPage = () => {
           { name: 'perihal', label: 'Perihal', type: 'text', required: true },
           { name: 'tujuan', label: 'Tujuan', type: 'text', required: true },
           { name: 'lokasi_tujuan', label: 'Lokasi Tujuan', type: 'text', required: true },
-          { name: 'alasan', label: 'Alasan', type: 'text', required: true },
+          { name: 'alasan', label: 'Alasan', type: 'textarea', required: true },
           { name: 'hari_tanggal', label: 'Hari/Tanggal', type: 'date', required: true },
           { name: 'waktu', label: 'Waktu', type: 'text', required: true },
           { name: 'tempat', label: 'Tempat', type: 'text', required: true },

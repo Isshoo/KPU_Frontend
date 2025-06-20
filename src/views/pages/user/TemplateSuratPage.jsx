@@ -197,7 +197,10 @@ const TemplateSuratPage = () => {
     lokasi_tugas: '',
     waktu_tugas: '',
     durasi_tugas: '',
-    bekal_tugas: ''
+    bekal_tugas: '',
+    tanda_tangan: null,
+    nama_penandatangan: '',
+    jabatan_penandatangan: '',
   });
   const previewRef = useRef(null);
   
@@ -226,7 +229,10 @@ const TemplateSuratPage = () => {
           { name: 'agenda_4', label: 'Agenda 4', type: 'text', required: false },
           { name: 'penerima', label: 'Penerima', type: 'text', required: true },
           { name: 'waktu_kedatangan', label: 'Waktu Kedatangan', type: 'text', required: true },
-          { name: 'tanggal_surat', label: 'Tanggal Surat', type: 'date', required: true }
+          { name: 'tanggal_surat', label: 'Tanggal Surat', type: 'date', required: true },
+          { name: 'jabatan_penandatangan', label: 'Jabatan Penandatangan', type: 'text', required: true },
+          { name: 'nama_penandatangan', label: 'Nama Penandatangan', type: 'text', required: true },
+          { name: 'tanda_tangan', label: 'File Tanda Tangan', type: 'file', required: true, accept: 'image/*' }
         ],
         template: `
           <div 
@@ -388,9 +394,18 @@ const TemplateSuratPage = () => {
               "
             >
               <p style="margin: 5px 0;">Manado, {{tanggal_surat}}</p>
-              <p style="margin: 5px 0;"><strong>Komisi Pemilihan Umum Kota Manado</strong></p>
-              <p style="margin: 60px 0 0 0;"><strong>Juan Johanis Derry</strong></p>
-              <p style="margin: 0;">NIP 19013008</p>
+              <p style="margin: 5px 0; font-weight: bold;">Komisi Pemilihan Umum Kota Manado</p>
+              <p style="margin: 5px 0;"><strong>{{jabatan_penandatangan}}</strong></p>
+              <div style="display: flex; flex-direction: column; align-items: end; gap: 10px; justify-content: flex-end; margin-top: 5px;">
+                <div style="display: flex; flex-direction: column; align-items: end; gap: 5px;">
+                  <div style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; align-self: center;">
+                    <img src="{{tanda_tangan}}" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                  </div>
+                  <div style="display: flex; flex-direction: column; align-items: end; gap: 10px; justify-content: flex-end;">
+                    <p style="margin: 0;"><strong>{{nama_penandatangan}}</strong></p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         `
@@ -411,7 +426,10 @@ const TemplateSuratPage = () => {
           { name: 'waktu_tugas', label: 'Waktu Tugas', type: 'text', required: true },
           { name: 'durasi_tugas', label: 'Durasi Tugas', type: 'text', required: true },
           { name: 'bekal_tugas', label: 'Bekal Tugas', type: 'textarea', required: false },
-          { name: 'tanggal_surat', label: 'Tanggal Surat', type: 'date', required: true }
+          { name: 'tanggal_surat', label: 'Tanggal Surat', type: 'date', required: true },
+          { name: 'jabatan_penandatangan', label: 'Jabatan Penandatangan', type: 'text', required: true },
+          { name: 'nama_penandatangan', label: 'Nama Penandatangan', type: 'text', required: true },
+          { name: 'tanda_tangan', label: 'File Tanda Tangan', type: 'file', required: true, accept: 'image/*' }
         ],
         template: `
           <div 
@@ -560,9 +578,18 @@ const TemplateSuratPage = () => {
               "
             >
               <p style="margin: 5px 0;">Manado, {{tanggal_surat}}</p>
-              <p style="margin: 5px 0;"><strong>Komisi Pemilihan Umum Kota Manado</strong></p>
-              <p style="margin: 60px 0 0 0;"><strong>Juan Johanis Derry</strong></p>
-              <p style="margin: 0;">NIP 19013008</p>
+              <p style="margin: 5px 0; font-weight: bold;">Komisi Pemilihan Umum Kota Manado</p>
+              <p style="margin: 5px 0;"><strong>{{jabatan_penandatangan}}</strong></p>
+              <div style="display: flex; flex-direction: column; align-items: end; gap: 10px; justify-content: flex-end; margin-top: 5px;">
+                <div style="display: flex; flex-direction: column; align-items: end; gap: 5px;">
+                  <div style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; align-self: center;">
+                    <img src="{{tanda_tangan}}" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                  </div>
+                  <div style="display: flex; flex-direction: column; align-items: end; gap: 10px; justify-content: flex-end;">
+                    <p style="margin: 0;"><strong>{{nama_penandatangan}}</strong></p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         `
@@ -598,16 +625,35 @@ const TemplateSuratPage = () => {
       lokasi_tugas: '',
       waktu_tugas: '',
       durasi_tugas: '',
-      bekal_tugas: ''
+      bekal_tugas: '',
+      tanda_tangan: null,
+      nama_penandatangan: '',
+      jabatan_penandatangan: '',
     });
   };
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    const { name, value, files } = e.target;
+    
+    if (name === 'tanda_tangan' && files) {
+      const file = files[0];
+      if (file) {
+        // Create a preview URL for the signature
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setFormData(prev => ({
+            ...prev,
+            [name]: e.target.result // Store the data URL
+          }));
+        };
+        reader.readAsDataURL(file);
+      }
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const generatePreview = () => {
@@ -671,12 +717,20 @@ const TemplateSuratPage = () => {
       let keterangan = '';
       if (selectedTemplate.id === 1) {
         // Surat Undangan
-        keterangan = `Tujuan: ${formData.tujuan}\nLokasi: ${formData.lokasi_tujuan}\nAlasan: ${formData.alasan}\nHari/Tanggal: ${formData.hari_tanggal}\nWaktu: ${formData.waktu}\nTempat: ${formData.tempat}\nAgenda: ${formData.agenda_1}${formData.agenda_2 ? ', ' + formData.agenda_2 : ''}${formData.agenda_3 ? ', ' + formData.agenda_3 : ''}${formData.agenda_4 ? ', ' + formData.agenda_4 : ''}\nPenerima: ${formData.penerima}\nWaktu Kedatangan: ${formData.waktu_kedatangan}`;
+        keterangan = `Tujuan: ${formData.tujuan}\nLokasi: ${formData.lokasi_tujuan}\nAlasan: ${formData.alasan}\nHari/Tanggal: ${formData.hari_tanggal}\nWaktu: ${formData.waktu}\nTempat: ${formData.tempat}\nAgenda: ${formData.agenda_1}${formData.agenda_2 ? ', ' + formData.agenda_2 : ''}${formData.agenda_3 ? ', ' + formData.agenda_3 : ''}${formData.agenda_4 ? ', ' + formData.agenda_4 : ''}\nPenerima: ${formData.penerima}\nWaktu Kedatangan: ${formData.waktu_kedatangan}\n\nPenandatangan:\nNama: ${formData.nama_penandatangan}\nJabatan: ${formData.jabatan_penandatangan}`;
       } else if (selectedTemplate.id === 2) {
         // Surat Tugas
-        keterangan = `Nama Petugas: ${formData.nama_petugas}\nJabatan: ${formData.jabatan_petugas}\nTugas: ${formData.tugas}\nLokasi: ${formData.lokasi_tugas}\nWaktu: ${formData.waktu_tugas}\nDurasi: ${formData.durasi_tugas}${formData.bekal_tugas ? '\nBekal: ' + formData.bekal_tugas : ''}`;
+        keterangan = `Nama Petugas: ${formData.nama_petugas}\nJabatan: ${formData.jabatan_petugas}\nTugas: ${formData.tugas}\nLokasi: ${formData.lokasi_tugas}\nWaktu: ${formData.waktu_tugas}\nDurasi: ${formData.durasi_tugas}${formData.bekal_tugas ? '\nBekal: ' + formData.bekal_tugas : ''}\n\nPenandatangan:\nNama: ${formData.nama_penandatangan}\nJabatan: ${formData.jabatan_penandatangan}`;
       }
       formDataToSend.append('keterangan', keterangan);
+
+      // Add signature file if available
+      // if (formData.tanda_tangan) {
+      //   // Convert data URL back to blob for upload
+      //   const response = await fetch(formData.tanda_tangan);
+      //   const signatureBlob = await response.blob();
+      //   formDataToSend.append('tanda_tangan', signatureBlob, 'signature.png');
+      // }
 
       // Log the form data for debugging
       console.log('Sending form data:', {
@@ -685,7 +739,8 @@ const TemplateSuratPage = () => {
         tanggal_kirim: formData.tanggal_surat,
         ditujukan_kepada: selectedTemplate.id === 1 ? formData.tujuan : formData.nama_petugas,
         perihal: formData.perihal,
-        keterangan: keterangan
+        keterangan: keterangan,
+        // hasSignature: !!formData.tanda_tangan
       });
 
       // Send to API
@@ -753,12 +808,36 @@ const TemplateSuratPage = () => {
     if (!selectedTemplate) return null;
 
     return selectedTemplate.formFields.map((field) => (
-      <FormGroup key={field.name}>
+      <FormGroup key={field.name} style={{ marginBottom: '10px' }}>
         <Label>
           {field.label}
           {field.required && <span style={{ color: 'red' }}> *</span>}
         </Label>
-        {field.type === 'textarea' ? (
+        {field.type === 'file' ? (
+          <div>
+            <Input
+              type={field.type}
+              name={field.name}
+              onChange={handleInputChange}
+              accept={field.accept}
+              required={field.required}
+            />
+            {formData[field.name] && (
+              <div style={{ marginTop: '10px' }}>
+                <img 
+                  src={formData[field.name]} 
+                  alt="Preview Tanda Tangan" 
+                  style={{ 
+                    maxWidth: '200px', 
+                    maxHeight: '100px', 
+                    border: '1px solid #ddd',
+                    borderRadius: '4px'
+                  }} 
+                />
+              </div>
+            )}
+          </div>
+        ) : field.type === 'textarea' ? (
           <TextArea
             name={field.name}
             value={formData[field.name] || ''}
@@ -801,9 +880,15 @@ const TemplateSuratPage = () => {
                 <td>{template.deskripsi}</td>
                 <td>{template.dibuat}</td>
                 <td>
-                  <Button className="primary" onClick={() => handleTemplateSelect(template)}>
-                    <FaCheck /> Gunakan
-                  </Button>
+                  {template.id === selectedTemplate?.id ? (
+                    <Button className="success" disabled onClick={() => handleTemplateSelect(template)}>
+                      <FaCheck /> Digunakan
+                    </Button>
+                  ) : (
+                    <Button className="primary" onClick={() => handleTemplateSelect(template)}>
+                      Gunakan
+                    </Button>
+                  )}
                 </td>
               </tr>
             ))}

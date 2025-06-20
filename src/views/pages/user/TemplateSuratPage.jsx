@@ -203,6 +203,7 @@ const TemplateSuratPage = () => {
     jabatan_penandatangan: '',
   });
   const previewRef = useRef(null);
+  const fileInputRef = useRef(null);
   
   useEffect(() => {
     // TODO: Fetch templates from API
@@ -597,8 +598,24 @@ const TemplateSuratPage = () => {
     ]);
   }, []);
 
+  // Clear signature preview when template changes
+  useEffect(() => {
+    if (selectedTemplate) {
+      setFormData(prev => ({
+        ...prev,
+        tanda_tangan: null
+      }));
+      
+      // Clear file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  }, [selectedTemplate?.id]);
+
   const handleTemplateSelect = (template) => {
     setSelectedTemplate(template);
+    // Reset form data when selecting a new template
     setFormData({
       nomor_surat: '',
       tanggal_surat: '',
@@ -628,8 +645,15 @@ const TemplateSuratPage = () => {
       bekal_tugas: '',
       tanda_tangan: null,
       nama_penandatangan: '',
-      jabatan_penandatangan: '',
+      jabatan_penandatangan: ''
     });
+
+    // Reset file input element
+    setTimeout(() => {
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }, 100);
   };
 
   const handleInputChange = (e) => {
@@ -854,11 +878,13 @@ const TemplateSuratPage = () => {
         {field.type === 'file' ? (
           <div>
             <Input
+              ref={fileInputRef}
               type={field.type}
               name={field.name}
               onChange={handleInputChange}
               accept={field.accept}
               required={field.required}
+              key={`${selectedTemplate.id}-${field.name}`} // Add key to force re-render
             />
             {formData[field.name] && (
               <div style={{ marginTop: '10px' }}>

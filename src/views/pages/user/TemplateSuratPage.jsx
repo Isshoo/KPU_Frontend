@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, memo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { FaPlus, FaEdit, FaTrash, FaEye, FaSave, FaCheck, FaTimes, FaDownload, FaUpload } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash, FaEye, FaSave, FaCheck, FaTimes, FaDownload, FaUpload, FaUndo } from 'react-icons/fa';
 import { debounce } from 'lodash';
 import Layout from '../../components/Base/Layout';
 import { BASE_URL } from '../../../globals/config';
@@ -923,6 +923,13 @@ const TemplateSuratPage = () => {
     ));
   };
 
+  const handleResetForm = () => {
+    setFormData({});
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   return (
     <Layout>
       <Card>
@@ -976,8 +983,8 @@ const TemplateSuratPage = () => {
                 <Button className="primary" onClick={handleDownload}>
                   <FaDownload /> Download PDF
                 </Button>
-                <Button className="secondary" onClick={() => setSelectedTemplate(null)}>
-                  <FaTimes /> Batal
+                <Button className="secondary" onClick={handleResetForm}>
+                  <FaUndo /> Reset Form
                 </Button>
               </ActionButtons>
             </div>

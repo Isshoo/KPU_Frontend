@@ -154,6 +154,18 @@ const TextArea = styled.textarea`
   }
 `;
 
+const Select = styled.select`
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  
+  &:focus {
+    outline: none;
+    border-color: #4154f1;
+  }
+`;
+
 const TemplateSuratPage = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.authUser);
@@ -165,7 +177,27 @@ const TemplateSuratPage = () => {
     tanggal_kirim: '',
     ditujukan_kepada: '',
     perihal: '',
-    keterangan: ''
+    keterangan: '',
+    lampiran: '',
+    tujuan: '',
+    lokasi_tujuan: '',
+    alasan: '',
+    hari_tanggal: '',
+    waktu: '',
+    tempat: '',
+    agenda_1: '',
+    agenda_2: '',
+    agenda_3: '',
+    agenda_4: '',
+    penerima: '',
+    waktu_kedatangan: '',
+    nama_petugas: '',
+    jabatan_petugas: '',
+    tugas: '',
+    lokasi_tugas: '',
+    waktu_tugas: '',
+    durasi_tugas: '',
+    bekal_tugas: ''
   });
   const previewRef = useRef(null);
   
@@ -174,10 +206,28 @@ const TemplateSuratPage = () => {
     setTemplates([
       {
         id: 1,
-        nama: 'Surat Tugas',
+        nama: 'Surat Dinas',
         jenis: 'Surat Keluar',
-        deskripsi: 'Template untuk surat penugasan',
-        dibuat: '2024-03-19',
+        deskripsi: 'Template untuk surat undangan rapat',
+        dibuat: '2024-03-20',
+        formFields: [
+          { name: 'nomor_surat', label: 'Nomor Surat', type: 'text', required: true },
+          { name: 'lampiran', label: 'Lampiran', type: 'text', required: false },
+          { name: 'perihal', label: 'Perihal', type: 'text', required: true },
+          { name: 'tujuan', label: 'Tujuan', type: 'text', required: true },
+          { name: 'lokasi_tujuan', label: 'Lokasi Tujuan', type: 'text', required: true },
+          { name: 'alasan', label: 'Alasan', type: 'text', required: true },
+          { name: 'hari_tanggal', label: 'Hari/Tanggal', type: 'text', required: true },
+          { name: 'waktu', label: 'Waktu', type: 'text', required: true },
+          { name: 'tempat', label: 'Tempat', type: 'text', required: true },
+          { name: 'agenda_1', label: 'Agenda 1', type: 'text', required: true },
+          { name: 'agenda_2', label: 'Agenda 2', type: 'text', required: false },
+          { name: 'agenda_3', label: 'Agenda 3', type: 'text', required: false },
+          { name: 'agenda_4', label: 'Agenda 4', type: 'text', required: false },
+          { name: 'penerima', label: 'Penerima', type: 'text', required: true },
+          { name: 'waktu_kedatangan', label: 'Waktu Kedatangan', type: 'text', required: true },
+          { name: 'tanggal_surat', label: 'Tanggal Surat', type: 'date', required: true }
+        ],
         template: `
           <div 
             class="surat" 
@@ -343,7 +393,178 @@ const TemplateSuratPage = () => {
               <p style="margin: 0;">NIP 19013008</p>
             </div>
           </div>
+        `
+      },
+      {
+        id: 2,
+        nama: 'Surat Tugas',
+        jenis: 'Surat Keluar',
+        deskripsi: 'Template untuk surat penugasan',
+        dibuat: '2024-03-19',
+        formFields: [
+          { name: 'nomor_surat', label: 'Nomor Surat', type: 'text', required: true },
+          { name: 'perihal', label: 'Perihal', type: 'text', required: true },
+          { name: 'nama_petugas', label: 'Nama Petugas', type: 'text', required: true },
+          { name: 'jabatan_petugas', label: 'Jabatan Petugas', type: 'text', required: true },
+          { name: 'tugas', label: 'Tugas', type: 'textarea', required: true },
+          { name: 'lokasi_tugas', label: 'Lokasi Tugas', type: 'text', required: true },
+          { name: 'waktu_tugas', label: 'Waktu Tugas', type: 'text', required: true },
+          { name: 'durasi_tugas', label: 'Durasi Tugas', type: 'text', required: true },
+          { name: 'bekal_tugas', label: 'Bekal Tugas', type: 'textarea', required: false },
+          { name: 'tanggal_surat', label: 'Tanggal Surat', type: 'date', required: true }
+        ],
+        template: `
+          <div 
+            class="surat" 
+            style="
+              width: 210mm;
+              min-height: 297mm;
+              padding: 2.54cm;
+              margin: 0;
+              border: 1px solid #000;
+              box-sizing: border-box;
+              font-family: 'Times New Roman', Times, serif;
+              font-size: 12pt;
+              line-height: 1.15;
+            "
+          >
+            <div 
+              class="header" 
+              style="
+                text-align: center; 
+                margin-bottom: 10px;
+                border-bottom: 1px solid #000;
+                padding-top: 80px;
+                padding-bottom: 10px;
+                position: relative;
+              "
+            >
+            <img src="/logo_kpu.png" alt="KPU Logo" className="logo" style="width: 90px; height: 90px; margin-bottom: 20px; position: absolute; top: -30px; left: 50%; transform: translateX(-50%);"/>
+              <h2 style="margin: 0; font-size: 14pt; text-transform: uppercase;">
+                KOMISI PEMILIHAN UMUM KOTA MANADO
+              </h2>
+              <p style="margin: 5px 0 0 0;">Jalan Balai Kota No. 1, Manado, Sulawesi Utara 95111</p>
+              <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                <p style="margin: 5px 0 0 0;">Telp. (0431) 841346</p>
+                <p style="margin: 5px 0 0 0;">Fax. (0431) 841346</p>
+              </div>
+            </div>
 
+            <div 
+              class="info-surat" 
+              style="
+                margin-top: 20px; 
+                margin-bottom: 20px;
+              "
+            >
+            <table>
+              <tr>
+                <td>
+                  <p style="margin: 5px 0 2px;"><strong>Nomor</strong></p>
+                </td>
+                <td>
+                  <p style="margin: 5px 0 2px 30px;">: {{nomor_surat}}</p>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <p style="margin: 2px 0;"><strong>Perihal</strong></p>
+                </td>
+                <td>
+                  <p style="margin: 2px 0 2px 30px;">: {{perihal}}</p>
+                </td>
+              </tr>
+            </table>
+            </div>
+
+            <div 
+              class="isi-surat" 
+              style="
+                margin-bottom: 20px;
+                text-align: justify;
+              "
+            >
+              <p style="margin: 10px 0 5px 0;">Dengan hormat,</p>
+              <p style="margin: 5px 0; text-indent: 40px; line-height: 1.15;">
+                Sehubungan dengan tugas dan fungsi Komisi Pemilihan Umum Kota Manado, maka dengan ini
+                kami menugaskan:
+              </p>
+
+              <div style="margin: 10px 0; padding-left: 40px;">
+              <table>
+                <tr>
+                  <td>
+                    <p style="margin-block: 5px;"><strong>Nama</strong></p>
+                  </td>
+                  <td>
+                    <p style="margin-left: 15px; margin-block: 5px;">: {{nama_petugas}}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <p style="margin-block: 5px;"><strong>Jabatan</strong></p>
+                  </td>
+                  <td>
+                    <p style="margin-left: 15px; margin-block: 5px;">: {{jabatan_petugas}}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="vertical-align: top;">
+                    <p style="margin-block: 5px;"><strong>Tugas</strong></p>
+                  </td>
+                  <td style="vertical-align: top;">
+                    <p style="margin-left: 15px; margin-block: 5px;">: {{tugas}}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <p style="margin-block: 5px;"><strong>Lokasi</strong></p>
+                  </td>
+                  <td>
+                    <p style="margin-left: 15px; margin-block: 5px;">: {{lokasi_tugas}}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <p style="margin-block: 5px;"><strong>Waktu</strong></p>
+                  </td>
+                  <td>
+                    <p style="margin-left: 15px; margin-block: 5px;">: {{waktu_tugas}}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <p style="margin-block: 5px;"><strong>Durasi</strong></p>
+                  </td>
+                  <td>
+                    <p style="margin-left: 15px; margin-block: 5px;">: {{durasi_tugas}}</p>
+                  </td>
+                </tr>
+              </table>
+              </div>
+
+              <p style="margin: 10px 0; text-indent: 40px; line-height: 1.15;">
+                {{bekal_tugas}}
+              </p>
+
+              <p style="margin: 10px 0; text-indent: 0; line-height: 1.15;">
+                Demikian surat tugas ini kami sampaikan untuk dapat dilaksanakan dengan sebaik-baiknya.
+              </p>
+            </div>
+
+            <div 
+              class="penutup" 
+              style="
+                text-align: right; 
+                margin-top: 40px;
+              "
+            >
+              <p style="margin: 5px 0;">Manado, {{tanggal_surat}}</p>
+              <p style="margin: 5px 0;"><strong>Komisi Pemilihan Umum Kota Manado</strong></p>
+              <p style="margin: 60px 0 0 0;"><strong>Juan Johanis Derry</strong></p>
+              <p style="margin: 0;">NIP 19013008</p>
+            </div>
+          </div>
         `
       }
     ]);
@@ -357,7 +578,27 @@ const TemplateSuratPage = () => {
       tanggal_kirim: '',
       ditujukan_kepada: '',
       perihal: '',
-      keterangan: ''
+      keterangan: '',
+      lampiran: '',
+      tujuan: '',
+      lokasi_tujuan: '',
+      alasan: '',
+      hari_tanggal: '',
+      waktu: '',
+      tempat: '',
+      agenda_1: '',
+      agenda_2: '',
+      agenda_3: '',
+      agenda_4: '',
+      penerima: '',
+      waktu_kedatangan: '',
+      nama_petugas: '',
+      jabatan_petugas: '',
+      tugas: '',
+      lokasi_tugas: '',
+      waktu_tugas: '',
+      durasi_tugas: '',
+      bekal_tugas: ''
     });
   };
 
@@ -396,8 +637,8 @@ const TemplateSuratPage = () => {
       });
 
       // Calculate dimensions to fit A4
-      const imgWidth = 210; // A4 width in cm
-      const imgHeight = 297;
+      const imgWidth = 210; // A4 width in mm
+      const imgHeight = 297; // A4 height in mm
       
       // Create PDF
       const pdf = new jsPDF('p', 'mm', 'a4');
@@ -413,24 +654,38 @@ const TemplateSuratPage = () => {
       // Convert PDF to blob
       const pdfBlob = pdf.output('blob');
 
-      // Create form data
+      // Create form data with required backend fields
       const formDataToSend = new FormData();
       formDataToSend.append('file', pdfBlob, 'surat.pdf');
+      
+      // Required fields for backend (mapping from template data)
       formDataToSend.append('nomor_surat', formData.nomor_surat);
       formDataToSend.append('tanggal_surat', formData.tanggal_surat);
-      formDataToSend.append('tanggal_kirim', formData.tanggal_kirim);
-      formDataToSend.append('ditujukan_kepada', formData.ditujukan_kepada);
+      formDataToSend.append('tanggal_kirim', formData.tanggal_surat); // Use tanggal_surat as tanggal_kirim
+      formDataToSend.append('ditujukan_kepada', 
+        selectedTemplate.id === 1 ? formData.tujuan : formData.nama_petugas
+      );
       formDataToSend.append('perihal', formData.perihal);
-      formDataToSend.append('keterangan', formData.keterangan || '');
+      
+      // Combine template-specific data into keterangan
+      let keterangan = '';
+      if (selectedTemplate.id === 1) {
+        // Surat Undangan
+        keterangan = `Tujuan: ${formData.tujuan}\nLokasi: ${formData.lokasi_tujuan}\nAlasan: ${formData.alasan}\nHari/Tanggal: ${formData.hari_tanggal}\nWaktu: ${formData.waktu}\nTempat: ${formData.tempat}\nAgenda: ${formData.agenda_1}${formData.agenda_2 ? ', ' + formData.agenda_2 : ''}${formData.agenda_3 ? ', ' + formData.agenda_3 : ''}${formData.agenda_4 ? ', ' + formData.agenda_4 : ''}\nPenerima: ${formData.penerima}\nWaktu Kedatangan: ${formData.waktu_kedatangan}`;
+      } else if (selectedTemplate.id === 2) {
+        // Surat Tugas
+        keterangan = `Nama Petugas: ${formData.nama_petugas}\nJabatan: ${formData.jabatan_petugas}\nTugas: ${formData.tugas}\nLokasi: ${formData.lokasi_tugas}\nWaktu: ${formData.waktu_tugas}\nDurasi: ${formData.durasi_tugas}${formData.bekal_tugas ? '\nBekal: ' + formData.bekal_tugas : ''}`;
+      }
+      formDataToSend.append('keterangan', keterangan);
 
       // Log the form data for debugging
       console.log('Sending form data:', {
         nomor_surat: formData.nomor_surat,
         tanggal_surat: formData.tanggal_surat,
-        tanggal_kirim: formData.tanggal_kirim,
-        ditujukan_kepada: formData.ditujukan_kepada,
+        tanggal_kirim: formData.tanggal_surat,
+        ditujukan_kepada: selectedTemplate.id === 1 ? formData.tujuan : formData.nama_petugas,
         perihal: formData.perihal,
-        keterangan: formData.keterangan
+        keterangan: keterangan
       });
 
       // Send to API
@@ -471,8 +726,8 @@ const TemplateSuratPage = () => {
       });
 
       // Calculate dimensions to fit A4
-      const imgWidth = 210; // A4 width in cm
-      const imgHeight = 297;
+      const imgWidth = 210; // A4 width in mm
+      const imgHeight = 297; // A4 height in mm
       
       // Create PDF
       const pdf = new jsPDF('p', 'mm', 'a4');
@@ -494,10 +749,40 @@ const TemplateSuratPage = () => {
     }
   };
 
+  const renderFormFields = () => {
+    if (!selectedTemplate) return null;
+
+    return selectedTemplate.formFields.map((field) => (
+      <FormGroup key={field.name}>
+        <Label>
+          {field.label}
+          {field.required && <span style={{ color: 'red' }}> *</span>}
+        </Label>
+        {field.type === 'textarea' ? (
+          <TextArea
+            name={field.name}
+            value={formData[field.name] || ''}
+            onChange={handleInputChange}
+            placeholder={`Masukkan ${field.label.toLowerCase()}`}
+            required={field.required}
+          />
+        ) : (
+          <Input
+            type={field.type}
+            name={field.name}
+            value={formData[field.name] || ''}
+            onChange={handleInputChange}
+            placeholder={`Masukkan ${field.label.toLowerCase()}`}
+            required={field.required}
+          />
+        )}
+      </FormGroup>
+    ));
+  };
+
   return (
     <Layout>
       <Card>
-        
         <Table>
           <thead>
             <tr>
@@ -509,7 +794,7 @@ const TemplateSuratPage = () => {
             </tr>
           </thead>
           <tbody>
-            {templates.map(template => (
+            {templates.map((template) => (
               <tr key={template.id}>
                 <td>{template.nama}</td>
                 <td>{template.jenis}</td>
@@ -525,72 +810,16 @@ const TemplateSuratPage = () => {
           </tbody>
         </Table>
         <div>
-          {/* divider line */}
           <div style={{ width: '100%', height: '1px', backgroundColor: '#000', margin: '20px 0' }}></div>
         </div>
 
         {selectedTemplate && (
           <div className="template-editor" style={{ display: 'flex', gap: '20px', marginTop: '20px', justifyContent: 'space-between' }}>
             <div className="editor-section" style={{flex: 0.6}}>
-              <h3 style={{marginBottom: '20px' ,borderBottom: '1px solid #000', paddingBottom: '10px'}}>Form Surat</h3>
-              <FormGroup>
-                <Label>Nomor Surat</Label>
-                <Input
-                  type="text"
-                  name="nomor_surat"
-                  value={formData.nomor_surat}
-                  onChange={handleInputChange}
-                  placeholder="Masukkan nomor surat"
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label>Tanggal Surat</Label>
-                <Input
-                  type="date"
-                  name="tanggal_surat"
-                  value={formData.tanggal_surat}
-                  onChange={handleInputChange}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label>Tanggal Kirim</Label>
-                <Input
-                  type="date"
-                  name="tanggal_kirim"
-                  value={formData.tanggal_kirim}
-                  onChange={handleInputChange}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label>Ditujukan Kepada</Label>
-                <Input
-                  type="text"
-                  name="ditujukan_kepada"
-                  value={formData.ditujukan_kepada}
-                  onChange={handleInputChange}
-                  placeholder="Masukkan ditujukan kepada"
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label>Perihal</Label>
-                <Input
-                  type="text"
-                  name="perihal"
-                  value={formData.perihal}
-                  onChange={handleInputChange}
-                  placeholder="Masukkan perihal surat"
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label>Keterangan</Label>
-                <Input
-                  as="textarea"
-                  name="keterangan"
-                  value={formData.keterangan}
-                  onChange={handleInputChange}
-                  placeholder="Masukkan keterangan (opsional)"
-                />
-              </FormGroup>
+              <h3 style={{marginBottom: '20px' ,borderBottom: '1px solid #000', paddingBottom: '10px'}}>
+                Form Surat - {selectedTemplate.nama}
+              </h3>
+              {renderFormFields()}
               <ActionButtons>
                 <Button className="success" onClick={handleSave}>
                   <FaUpload /> Upload ke Sistem
@@ -613,7 +842,6 @@ const TemplateSuratPage = () => {
                 }}
                 dangerouslySetInnerHTML={{ __html: generatePreview() }} 
               />
-              
             </div>
           </div>
         )}

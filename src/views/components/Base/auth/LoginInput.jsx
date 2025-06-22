@@ -4,14 +4,16 @@ import useInput from '../../../../hooks/useInput';
 import useVisibility from '../../../../hooks/useVisibility';
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa6';
 
-function LoginInput({ login, locale }) {
+function LoginInput({ login, locale, isLoading = false }) {
   const [username, onUsernameChange] = useInput('');
   const [password, onPasswordChange] = useInput('');
   const [showPassword, setShowPassword] = useVisibility(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    login({ username, password });
+    if (!isLoading) {
+      login({ username, password });
+    }
   };
 
   return (
@@ -24,9 +26,11 @@ function LoginInput({ login, locale }) {
           name="username"
           className="form-input"
           required
+          disabled={isLoading}
           placeholder={locale === 'EN' ? 'Enter your username' : 'Masukkan username Anda'}
           value={username}
           onChange={onUsernameChange}
+          autoComplete="username"
         />
       </div>
       <div className="input-group">
@@ -38,22 +42,32 @@ function LoginInput({ login, locale }) {
             name="password"
             className="form-input"
             required
+            disabled={isLoading}
             placeholder={locale === 'EN' ? 'Enter your password' : 'Masukkan password Anda'}
             value={password}
             onChange={onPasswordChange}
+            autoComplete="off"
           />
           <button
             type="button"
             className="password-toggle"
             onClick={setShowPassword}
+            disabled={isLoading}
             aria-label={locale === 'EN' ? 'Toggle password visibility' : 'Ubah visibilitas password'}
           >
             {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
           </button>
         </div>
       </div>
-      <button type="submit" className="submit-button">
-        {locale === 'EN' ? 'Sign In' : 'Masuk'}
+      <button 
+        type="submit" 
+        className="submit-button"
+        disabled={isLoading}
+      >
+        {isLoading 
+          ? (locale === 'EN' ? 'Signing In...' : 'Sedang Masuk...') 
+          : (locale === 'EN' ? 'Sign In' : 'Masuk')
+        }
       </button>
     </form>
   );
@@ -62,6 +76,7 @@ function LoginInput({ login, locale }) {
 LoginInput.propTypes = {
   login: PropTypes.func.isRequired,
   locale: PropTypes.string.isRequired,
+  isLoading: PropTypes.bool,
 };
 
 export default LoginInput;

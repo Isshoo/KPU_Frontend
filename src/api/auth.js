@@ -28,27 +28,49 @@ async function register({ name, email, password }) {
 }
 
 async function login({ username, password }) {
-  const response = await fetch(`${BASE_URL}/auth/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      username,
-      password,
-    }),
-  });
+  try {
+    const response = await fetch(`${BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username,
+        password,
+      }),
+    });
 
-  const responseJson = await response.json();
-  console.log(responseJson);
+    const responseJson = await response.json();
+    console.log('Login response:', responseJson);
 
-  const { access_token } = responseJson;
+    if (!response.ok) {
+      // Handle different HTTP status codes
+      if (response.status === 401) {
+        throw new Error('Username atau password salah');
+      } else if (response.status === 400) {
+        throw new Error(responseJson.message || 'Data login tidak valid');
+      } else if (response.status === 500) {
+        throw new Error('Terjadi kesalahan pada server');
+      } else {
+        throw new Error(responseJson.message || 'Terjadi kesalahan saat login');
+      }
+    }
 
-  if (!access_token) {
-    throw new Error(responseJson.message);
+    const { access_token } = responseJson;
+
+    if (!access_token) {
+      throw new Error(responseJson.message || 'Token tidak diterima dari server');
+    }
+
+    return access_token;
+  } catch (error) {
+    // Handle network errors
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      throw new Error('Tidak dapat terhubung ke server. Periksa koneksi internet Anda.');
+    }
+    // Re-throw other errors
+    throw error;
   }
-
-  return access_token;
 }
 
 async function changePassword({ current_password, new_password }) {

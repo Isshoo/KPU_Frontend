@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { FaUser, FaEnvelope, FaPhone, FaIdCard, FaBuilding, FaSave, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaPhone, FaIdCard, FaBuilding, FaSave, FaLock, FaEye, FaEyeSlash, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import Layout from '../../components/Base/Layout';
+import Toast from '../../components/Base/Toast';
+import useToast from '../../../hooks/useToast';
 import { changePassword } from '../../../api/auth';
 
 const Card = styled.div`
@@ -199,8 +201,45 @@ const ButtonGroup = styled.div`
   }
 `;
 
+const ErrorMessage = styled.div`
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  padding: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  
+  .error-icon {
+    color: #dc3545;
+    font-size: 16px;
+  }
+`;
+
+const SuccessMessage = styled.div`
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  border-radius: 4px;
+  padding: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  
+  .success-icon {
+    color: #28a745;
+    font-size: 16px;
+  }
+`;
+
 const ProfilPage = () => {
   const authUser = useSelector((state) => state.authUser);
+  const { toasts, showSuccess, showError, removeToast } = useToast();
   const [formData, setFormData] = useState({
     nama: '',
     username: '',
@@ -222,6 +261,8 @@ const ProfilPage = () => {
     confirm: false
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [generalError, setGeneralError] = useState('');
+  const [generalSuccess, setGeneralSuccess] = useState('');
   
   useEffect(() => {
     // TODO: Fetch user data from API
@@ -270,11 +311,15 @@ const ProfilPage = () => {
   
   const handleSubmit = (e) => {
     e.preventDefault();
+    clearMessages();
     
     if (validateForm()) {
       // TODO: Update profile via API
       console.log('Form data:', formData);
       setIsEditing(false);
+      showSuccess('Berhasil!', 'Profil berhasil diperbarui');
+    } else {
+      showError('Gagal!', 'Mohon periksa kembali data yang diisi');
     }
   };
 
@@ -324,18 +369,25 @@ const ProfilPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const clearMessages = () => {
+    setGeneralError('');
+    setGeneralSuccess('');
+  };
+
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     
     if (validatePasswordForm()) {
       setIsLoading(true);
+      setPasswordErrors({});
+      
       try {
         await changePassword({
           current_password: passwordData.current_password,
           new_password: passwordData.new_password
         });
 
-        alert('Password berhasil diubah!');
+        showSuccess('Berhasil!', 'Password berhasil diubah');
         setShowPasswordModal(false);
         setPasswordData({
           current_password: '',
@@ -345,9 +397,23 @@ const ProfilPage = () => {
         setPasswordErrors({});
       } catch (error) {
         console.error('Error updating password:', error);
-        setPasswordErrors({
-          current_password: error.message || 'Terjadi kesalahan pada server'
-        });
+        
+        // Handle specific error cases
+        if (error.message.includes('Current password is incorrect')) {
+          setPasswordErrors({
+            current_password: 'Password saat ini tidak benar'
+          });
+        } else if (error.message.includes('Current password and new password are required')) {
+          setPasswordErrors({
+            current_password: 'Password saat ini dan password baru harus diisi'
+          });
+        } else {
+          setPasswordErrors({
+            current_password: error.message || 'Terjadi kesalahan pada server'
+          });
+        }
+        
+        showError('Gagal!', error.message || 'Terjadi kesalahan saat mengubah password');
       } finally {
         setIsLoading(false);
       }
@@ -371,6 +437,9 @@ const ProfilPage = () => {
   
   return (
     <Layout>
+      {/* Toast Notifications */}
+      <Toast toasts={toasts} onClose={removeToast} />
+
       <Card>
         <Header>
           <Avatar>
@@ -383,6 +452,21 @@ const ProfilPage = () => {
             <p>{getRoleName(formData.jabatan)}</p>
           )}
         </Header>
+        
+        {/* General Error/Success Messages */}
+        {generalError && (
+          <ErrorMessage>
+            <FaExclamationTriangle className="error-icon" />
+            {generalError}
+          </ErrorMessage>
+        )}
+        
+        {generalSuccess && (
+          <SuccessMessage>
+            <FaCheckCircle className="success-icon" />
+            {generalSuccess}
+          </SuccessMessage>
+        )}
         
         <Form onSubmit={handleSubmit}>
           <div>
@@ -398,7 +482,24 @@ const ProfilPage = () => {
               />
               {errors.nama && <div className="error">{errors.nama}</div>}
             </FormGroup>
+
+            <FormGroup>
+              <label htmlFor="username">Username</label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                disabled={!isEditing}
+              />
+              {errors.username && <div className="error">{errors.username}</div>}
+            </FormGroup>
             
+            
+          </div>
+          
+          <div>
             <FormGroup>
               <label htmlFor="jabatan">Jabatan</label>
               <input
@@ -422,21 +523,6 @@ const ProfilPage = () => {
                 />
               </FormGroup>
             )}
-          </div>
-          
-          <div>
-            <FormGroup>
-              <label htmlFor="username">Username</label>
-              <input
-                type="text"
-                id="username"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                disabled={!isEditing}
-              />
-              {errors.username && <div className="error">{errors.username}</div>}
-            </FormGroup>
             
           </div>
         </Form>
@@ -451,6 +537,7 @@ const ProfilPage = () => {
                 type="button"
                 onClick={() => {
                   setIsEditing(false);
+                  clearMessages();
                   // Reset form data to original values
                   setFormData({
                     nama: authUser?.nama_lengkap || 'John Doe',
@@ -465,9 +552,9 @@ const ProfilPage = () => {
             </>
           ) : (
             <>
-              <Button type="button" onClick={() => setIsEditing(true)}>
+              {/* <Button type="button" onClick={() => setIsEditing(true)}>
                 Edit Profil
-              </Button>
+              </Button> */}
               <Button type="button" onClick={() => setShowPasswordModal(true)}>
                 <FaLock /> Ubah Password
               </Button>
@@ -497,6 +584,7 @@ const ProfilPage = () => {
                     value={passwordData.current_password}
                     onChange={handlePasswordChange}
                     placeholder="Masukkan password saat ini"
+                    autoComplete="off"
                   />
                   <button
                     type="button"
@@ -521,6 +609,7 @@ const ProfilPage = () => {
                     value={passwordData.new_password}
                     onChange={handlePasswordChange}
                     placeholder="Masukkan password baru"
+                    autoComplete="off"
                   />
                   <button
                     type="button"
@@ -545,6 +634,7 @@ const ProfilPage = () => {
                     value={passwordData.confirm_password}
                     onChange={handlePasswordChange}
                     placeholder="Konfirmasi password baru"
+                    autoComplete="off"
                   />
                   <button
                     type="button"

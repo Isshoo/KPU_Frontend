@@ -77,6 +77,17 @@
   color: #9aa0a6;
 }
 
+.form-input:disabled {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.form-input:disabled::placeholder {
+  color: #adb5bd;
+}
+
 .password-container {
   position: relative;
 }
@@ -94,10 +105,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: color 0.2s;
 }
 
 .password-toggle:hover {
   color: #1a73e8;
+}
+
+.password-toggle:disabled {
+  color: #adb5bd;
+  cursor: not-allowed;
+}
+
+.password-toggle:disabled:hover {
+  color: #adb5bd;
 }
 
 .submit-button {
@@ -109,17 +130,28 @@
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
   margin-top: 1rem;
+  position: relative;
 }
 
-.submit-button:hover {
+.submit-button:hover:not(:disabled) {
   background-color: #1557b0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
 }
 
 .submit-button:disabled {
   background-color: #dadce0;
+  color: #6c757d;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.submit-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3);
 }
 
 .register-link {
@@ -136,4 +168,25 @@
 
 .register-link a:hover {
   text-decoration: underline;
+}
+
+/* Loading animation for submit button */
+.submit-button:disabled::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  margin: auto;
+  border: 2px solid transparent;
+  border-top-color: #6c757d;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@keyframes spin {
+  0% { transform: translateY(-50%) rotate(0deg); }
+  100% { transform: translateY(-50%) rotate(360deg); }
 } 

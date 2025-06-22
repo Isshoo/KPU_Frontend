@@ -34,7 +34,9 @@ function asyncSetAuthUser({ username, password }) {
 
       dispatch(setAuthUserActionCreator(authUser));
     } catch (error) {
-      console.error(error.message);
+      console.error('Login error:', error.message);
+      // Re-throw the error so it can be caught by the component
+      throw error;
     }
   };
 }

@@ -149,7 +149,7 @@ const DashboardPage = () => {
     total_surat_masuk: 0,
     total_surat_keluar: 0,
     total_anggota: 0,
-    total_template: 0
+    total_template: 2
   });
   const [recentSuratMasuk, setRecentSuratMasuk] = useState([]);
   const [recentSuratKeluar, setRecentSuratKeluar] = useState([]);
@@ -249,7 +249,7 @@ const DashboardPage = () => {
             <FaFileAlt />
           </div>
           <div className="content">
-            <h3>{stats.total_template}</h3>
+            <h3>{stats.total_template || 2}</h3>
             <p>Template Surat</p>
           </div>
         </StatCard>

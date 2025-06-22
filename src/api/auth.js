@@ -51,7 +51,29 @@ async function login({ username, password }) {
   return access_token;
 }
 
+async function changePassword({ current_password, new_password }) {
+  const response = await _fetchWithAuth(`${BASE_URL}/auth/change-password`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      current_password,
+      new_password,
+    }),
+  });
+
+  const responseJson = await response.json();
+
+  if (!response.ok) {
+    throw new Error(responseJson.message || 'Terjadi kesalahan saat mengubah password');
+  }
+
+  return responseJson;
+}
+
 export {
   register,
   login,
+  changePassword,
 };

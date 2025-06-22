@@ -240,10 +240,10 @@ const HeaderBar = () => {
               <h6>{authUser?.username}</h6>
               <span>{getRoleName(authUser?.role)}</span> - <span>{getDivisiName(authUser?.divisi)}</span>
             </div>
-            {/* <Link to={`/profile/${authUser?.id}`} className="dropdown-item">
+            <Link to={`/profile/${authUser?.id}`} className="dropdown-item">
               <FaUser />
               <span>Profil</span>
-            </Link> */}
+            </Link>
             <Link to="/" className="dropdown-item" onClick={onSignOut}>
               <FaSignOutAlt />
               <span>Keluar</span>

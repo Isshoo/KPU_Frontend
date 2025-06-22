@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { FaSave, FaTimes, FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
 import Layout from '../../components/Base/Layout';
 import Toast from '../../components/Base/Toast';
+import SuccessModal from '../../components/Base/SuccessModal';
 import useToast from '../../../hooks/useToast';
 import { BASE_URL } from '../../../globals/config';
 import { _fetchWithAuth } from '../../../utils/auth_helper';
@@ -232,6 +233,8 @@ const InputSuratMasukPage = () => {
   const navigate = useNavigate();
   const { toasts, showSuccess, showError, removeToast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [submittedSuratData, setSubmittedSuratData] = useState(null);
   const [formData, setFormData] = useState({
     nomor_surat: '',
     tanggal_surat: '',
@@ -317,8 +320,15 @@ const InputSuratMasukPage = () => {
         throw new Error(errorData.message || 'Gagal membuat surat masuk');
       }
 
-      showSuccess('Berhasil!', 'Surat masuk berhasil ditambahkan');
-      navigate('/surat-masuk');
+      // Set success data and show modal
+      setSubmittedSuratData({
+        nomor_surat: formData.nomor_surat,
+        perihal: formData.perihal,
+        pengirim: formData.pengirim,
+        tanggal_surat: formData.tanggal_surat
+      });
+      setShowSuccessModal(true);
+      
     } catch (err) {
       console.error('Error creating surat:', err);
       showError('Gagal!', err.message || 'Terjadi kesalahan saat membuat surat masuk');
@@ -327,10 +337,45 @@ const InputSuratMasukPage = () => {
     }
   };
 
+  const handleSuccessClose = () => {
+    setShowSuccessModal(false);
+    setSubmittedSuratData(null);
+    // Reset form
+    setFormData({
+      nomor_surat: '',
+      tanggal_surat: '',
+      tanggal_terima: '',
+      pengirim: '',
+      perihal: '',
+      ditujukan_kepada: '',
+      keterangan: '',
+      file: null
+    });
+  };
+
+  const handleSuccessNavigate = () => {
+    setShowSuccessModal(false);
+    setSubmittedSuratData(null);
+    navigate('/surat-masuk');
+  };
+
   return (
     <Layout>
       {/* Toast Notifications */}
       <Toast toasts={toasts} onClose={removeToast} />
+      
+      {/* Success Modal */}
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={handleSuccessClose}
+        onNavigate={handleSuccessNavigate}
+        suratData={submittedSuratData}
+        title="Surat Masuk Berhasil Ditambahkan!"
+        message="Data surat masuk telah berhasil disimpan ke dalam sistem"
+        navigateText="Lihat Daftar Surat"
+        autoNavigate={true}
+        autoNavigateDelay={3000}
+      />
       
       <Card>
         <PageTitle>Input Surat Masuk</PageTitle>

@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { FaEye, FaFileDownload, FaChevronLeft, FaChevronRight, FaSearch, FaCalendar, FaTrash } from 'react-icons/fa';
 import Layout from '../../components/Base/Layout';
 import Toast from '../../components/Base/Toast';
+import DeleteConfirmationModal from '../../components/Base/DeleteConfirmationModal';
 import useToast from '../../../hooks/useToast';
 import { BASE_URL } from '../../../globals/config';
 import { _fetchWithAuth } from '../../../utils/auth_helper';
@@ -281,6 +282,8 @@ const SuratMasukPage = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [deletingId, setDeletingId] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedSurat, setSelectedSurat] = useState(null);
   const [pagination, setPagination] = useState({
     page: 1,
     per_page: 10,
@@ -361,19 +364,17 @@ const SuratMasukPage = () => {
     }
   };
 
-  const handleDelete = async (id, nomorSurat) => {
-    // Konfirmasi sebelum menghapus
-    const isConfirmed = window.confirm(
-      `Apakah Anda yakin ingin menghapus surat dengan nomor "${nomorSurat}"?\n\nTindakan ini tidak dapat dibatalkan.`
-    );
+  const handleDeleteClick = (surat) => {
+    setSelectedSurat(surat);
+    setShowDeleteModal(true);
+  };
 
-    if (!isConfirmed) {
-      return;
-    }
+  const handleDeleteConfirm = async () => {
+    if (!selectedSurat) return;
 
     try {
-      setDeletingId(id);
-      const response = await _fetchWithAuth(`${BASE_URL}/surat-masuk/${id}`, {
+      setDeletingId(selectedSurat.id);
+      const response = await _fetchWithAuth(`${BASE_URL}/surat-masuk/${selectedSurat.id}`, {
         method: 'DELETE'
       });
 
@@ -383,6 +384,8 @@ const SuratMasukPage = () => {
       }
 
       showSuccess('Berhasil!', 'Surat berhasil dihapus');
+      setShowDeleteModal(false);
+      setSelectedSurat(null);
       
       // Refresh data setelah berhasil menghapus
       await fetchSuratMasuk(pagination.page);
@@ -392,6 +395,11 @@ const SuratMasukPage = () => {
     } finally {
       setDeletingId(null);
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setShowDeleteModal(false);
+    setSelectedSurat(null);
   };
 
   const handlePageChange = (newPage) => {
@@ -439,6 +447,15 @@ const SuratMasukPage = () => {
     <Layout>
       {/* Toast Notifications */}
       <Toast toasts={toasts} onClose={removeToast} />
+      
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+        suratData={selectedSurat}
+        isLoading={deletingId !== null}
+      />
       
       <Card>
         <SearchBarComponent
@@ -489,7 +506,7 @@ const SuratMasukPage = () => {
                   </ActionButton>
                   <ActionButton 
                     className="danger" 
-                    onClick={() => handleDelete(surat.id, surat.nomor_surat)}
+                    onClick={() => handleDeleteClick(surat)}
                     disabled={deletingId === surat.id}
                     title="Hapus surat"
                   >

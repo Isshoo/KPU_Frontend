@@ -5,6 +5,9 @@ import styled from 'styled-components';
 import { FaPlus, FaEdit, FaTrash, FaEye, FaSave, FaCheck, FaTimes, FaDownload, FaUpload, FaUndo } from 'react-icons/fa';
 import { debounce } from 'lodash';
 import Layout from '../../components/Base/Layout';
+import Toast from '../../components/Base/Toast';
+import SuccessModal from '../../components/Base/SuccessModal';
+import useToast from '../../../hooks/useToast';
 import { BASE_URL } from '../../../globals/config';
 import { _fetchWithAuth } from '../../../utils/auth_helper';
 import html2canvas from 'html2canvas';
@@ -47,30 +50,51 @@ const Button = styled.button`
   align-items: center;
   gap: 5px;
   font-size: 14px;
+  font-weight: 500;
   transition: all 0.3s ease;
 
   &.primary {
     background-color: #0d6efd;
     color: white;
+    
+    &:hover:not(:disabled) {
+      background-color: #0b5ed7;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
+    }
   }
 
   &.secondary {
     background-color: #6c757d;
     color: white;
+    
+    &:hover:not(:disabled) {
+      background-color: #5c636a;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+    }
   }
 
   &.success {
     background-color: #198754;
     color: white;
-  }
-
-  &:hover {
-    opacity: 0.9;
+    
+    &:hover:not(:disabled) {
+      background-color: #157347;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(25, 135, 84, 0.3);
+    }
   }
 
   &:disabled {
     opacity: 0.7;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
   }
 `;
 
@@ -168,9 +192,13 @@ const Select = styled.select`
 
 const TemplateSuratPage = () => {
   const navigate = useNavigate();
+  const { toasts, showSuccess, showError, removeToast } = useToast();
   const user = useSelector((state) => state.authUser);
   const [templates, setTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [submittedSuratData, setSubmittedSuratData] = useState(null);
   const [formData, setFormData] = useState({
     nomor_surat: '',
     tanggal_surat: '',
@@ -755,6 +783,8 @@ const TemplateSuratPage = () => {
 
   const handleSave = async () => {
     try {
+      setLoading(true);
+      
       if (!previewRef.current) {
         throw new Error('Preview element not found');
       }
@@ -810,25 +840,6 @@ const TemplateSuratPage = () => {
       }
       formDataToSend.append('keterangan', keterangan);
 
-      // Add signature file if available
-      // if (formData.tanda_tangan) {
-      //   // Convert data URL back to blob for upload
-      //   const response = await fetch(formData.tanda_tangan);
-      //   const signatureBlob = await response.blob();
-      //   formDataToSend.append('tanda_tangan', signatureBlob, 'signature.png');
-      // }
-
-      // Log the form data for debugging
-      console.log('Sending form data:', {
-        nomor_surat: formData.nomor_surat,
-        tanggal_surat: formData.tanggal_surat,
-        tanggal_kirim: formData.tanggal_surat,
-        ditujukan_kepada: selectedTemplate.id === 1 ? formData.tujuan : formData.nama_petugas,
-        perihal: formData.perihal,
-        keterangan: keterangan,
-        // hasSignature: !!formData.tanda_tangan
-      });
-
       // Send to API
       const response = await _fetchWithAuth(`${BASE_URL}/surat-keluar/`, {
         method: 'POST',
@@ -840,15 +851,35 @@ const TemplateSuratPage = () => {
         throw new Error(errorData.message || 'Failed to save surat');
       }
 
-      // Show success message
-      alert('Surat berhasil disimpan');
+      // Set success data and show modal
+      setSubmittedSuratData({
+        nomor_surat: formData.nomor_surat,
+        perihal: formData.perihal,
+        ditujukan_kepada: selectedTemplate.id === 1 ? formData.tujuan : formData.nama_petugas,
+        tanggal_surat: formData.tanggal_surat,
+        template_name: selectedTemplate.nama
+      });
+      setShowSuccessModal(true);
       
-      // Navigate back
-      navigate('/surat-keluar');
     } catch (err) {
       console.error('Error saving surat:', err);
-      alert('Gagal menyimpan surat: ' + err.message);
+      showError('Gagal!', err.message || 'Terjadi kesalahan saat menyimpan surat');
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleSuccessClose = () => {
+    setShowSuccessModal(false);
+    setSubmittedSuratData(null);
+    // Reset form
+    handleResetForm();
+  };
+
+  const handleSuccessNavigate = () => {
+    setShowSuccessModal(false);
+    setSubmittedSuratData(null);
+    navigate('/surat-keluar');
   };
 
   const handleDownload = async () => {
@@ -1028,6 +1059,22 @@ const TemplateSuratPage = () => {
 
   return (
     <Layout>
+      {/* Toast Notifications */}
+      <Toast toasts={toasts} onClose={removeToast} />
+      
+      {/* Success Modal */}
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={handleSuccessClose}
+        onNavigate={handleSuccessNavigate}
+        suratData={submittedSuratData}
+        title="Surat Berhasil Dibuat!"
+        message={`Surat ${submittedSuratData?.template_name} telah berhasil dibuat dan disimpan ke dalam sistem`}
+        navigateText="Lihat Daftar Surat"
+        autoNavigate={true}
+        autoNavigateDelay={3000}
+      />
+      
       <Card>
         <Table>
           <thead>
@@ -1073,8 +1120,8 @@ const TemplateSuratPage = () => {
               </h3>
               {renderFormFields()}
               <ActionButtons>
-                <Button className="success" onClick={handleSave}>
-                  <FaUpload /> Upload ke Sistem
+                <Button className="success" onClick={handleSave} disabled={loading}>
+                  <FaUpload /> {loading ? 'Menyimpan...' : 'Upload ke Sistem'}
                 </Button>
                 <Button className="primary" onClick={handleDownload}>
                   <FaDownload /> Download PDF

@@ -2,8 +2,11 @@ import React, { useEffect, useState, useCallback, memo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { FaEye, FaFileDownload, FaChevronLeft, FaChevronRight, FaSearch, FaCalendar, FaPlus } from 'react-icons/fa';
+import { FaEye, FaFileDownload, FaChevronLeft, FaChevronRight, FaSearch, FaCalendar, FaPlus, FaTrash } from 'react-icons/fa';
 import Layout from '../../components/Base/Layout';
+import Toast from '../../components/Base/Toast';
+import DeleteConfirmationModal from '../../components/Base/DeleteConfirmationModal';
+import useToast from '../../../hooks/useToast';
 import { BASE_URL } from '../../../globals/config';
 import { _fetchWithAuth } from '../../../utils/auth_helper';
 import debounce from 'lodash/debounce';
@@ -112,20 +115,45 @@ const ActionButton = styled.button`
   &.primary {
     background-color: #0d6efd;
     color: white;
+    
+    &:hover:not(:disabled) {
+      background-color: #0b5ed7;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(13, 110, 253, 0.3);
+    }
   }
 
   &.success {
     background-color: #198754;
     color: white;
+    
+    &:hover:not(:disabled) {
+      background-color: #157347;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(25, 135, 84, 0.3);
+    }
   }
 
   &.danger {
     background-color: #dc3545;
     color: white;
+    
+    &:hover:not(:disabled) {
+      background-color: #bb2d3b;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+    }
   }
 
-  &:hover {
-    opacity: 0.9;
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
   }
 `;
 
@@ -175,6 +203,28 @@ const PaginationButton = styled.button`
   &:not(:disabled):hover {
     background-color: #e9ecef;
   }
+`;
+
+const LoadingSpinner = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  color: #6c757d;
+  font-size: 16px;
+`;
+
+const ErrorMessage = styled.div`
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
 `;
 
 const SearchBarComponent = memo(({ searchInput, onSearch, onDateChange, startDate, endDate }) => {
@@ -238,6 +288,7 @@ const SearchBarComponent = memo(({ searchInput, onSearch, onDateChange, startDat
 
 const SuratKeluarPage = () => {
   const navigate = useNavigate();
+  const { toasts, showSuccess, showError, removeToast } = useToast();
   const [suratKeluar, setSuratKeluar] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -245,6 +296,9 @@ const SuratKeluarPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [deletingId, setDeletingId] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedSurat, setSelectedSurat] = useState(null);
   const [pagination, setPagination] = useState({
     page: 1,
     per_page: 10,
@@ -276,6 +330,7 @@ const SuratKeluarPage = () => {
       setPagination(data.data.pagination);
     } catch (err) {
       setError(err.message);
+      showError('Gagal!', 'Gagal memuat data surat keluar');
     } finally {
       setLoading(false);
     }
@@ -296,6 +351,7 @@ const SuratKeluarPage = () => {
       window.open(url, '_blank');
     } catch (err) {
       console.error('Error viewing file:', err);
+      showError('Gagal!', 'Gagal membuka file surat');
     }
   };
 
@@ -314,9 +370,49 @@ const SuratKeluarPage = () => {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
+      showSuccess('Berhasil!', 'File surat berhasil diunduh');
     } catch (err) {
       console.error('Error downloading file:', err);
+      showError('Gagal!', 'Gagal mengunduh file surat');
     }
+  };
+
+  const handleDeleteClick = (surat) => {
+    setSelectedSurat(surat);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!selectedSurat) return;
+
+    try {
+      setDeletingId(selectedSurat.id);
+      const response = await _fetchWithAuth(`${BASE_URL}/surat-keluar/${selectedSurat.id}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to delete surat');
+      }
+
+      showSuccess('Berhasil!', 'Surat keluar berhasil dihapus');
+      setShowDeleteModal(false);
+      setSelectedSurat(null);
+      
+      // Refresh data setelah berhasil menghapus
+      await fetchSuratKeluar(pagination.page);
+    } catch (err) {
+      console.error('Error deleting surat:', err);
+      showError('Gagal!', err.message || 'Gagal menghapus surat keluar');
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setShowDeleteModal(false);
+    setSelectedSurat(null);
   };
 
   const handlePageChange = (newPage) => {
@@ -341,17 +437,40 @@ const SuratKeluarPage = () => {
   }, []);
 
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return (
+      <Layout>
+        <LoadingSpinner>Memuat data surat keluar...</LoadingSpinner>
+      </Layout>
+    );
   }
 
   if (error) {
-    return <div className="error">{error}</div>;
+    return (
+      <Layout>
+        <Card>
+          <ErrorMessage>
+            {error}
+          </ErrorMessage>
+        </Card>
+      </Layout>
+    );
   }
 
   return (
     <Layout>
+      {/* Toast Notifications */}
+      <Toast toasts={toasts} onClose={removeToast} />
+      
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+        suratData={selectedSurat}
+        isLoading={deletingId !== null}
+      />
+      
       <Card>
-
         <SearchBarComponent
           searchInput={searchInput}
           onSearch={handleSearch}
@@ -382,11 +501,28 @@ const SuratKeluarPage = () => {
                 <TableCell>{surat.perihal}</TableCell>
                 <TableCell>{surat.keterangan || '-'}</TableCell>
                 <TableCell>
-                  <ActionButton className="primary" onClick={() => handleView(surat.id)}>
+                  <ActionButton 
+                    className="primary" 
+                    onClick={() => handleView(surat.id)}
+                    title="Lihat surat"
+                  >
                     <FaEye /> Lihat
                   </ActionButton>
-                  <ActionButton className="success" onClick={() => handleDownload(surat.id)}>
+                  <ActionButton 
+                    className="success" 
+                    onClick={() => handleDownload(surat.id)}
+                    title="Download surat"
+                  >
                     <FaFileDownload /> Download
+                  </ActionButton>
+                  <ActionButton 
+                    className="danger" 
+                    onClick={() => handleDeleteClick(surat)}
+                    disabled={deletingId === surat.id}
+                    title="Hapus surat"
+                  >
+                    <FaTrash /> 
+                    {deletingId === surat.id ? 'Menghapus...' : 'Hapus'}
                   </ActionButton>
                 </TableCell>
               </tr>

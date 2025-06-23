@@ -271,7 +271,7 @@ const InputAnggotaPage = () => {
         title="Anggota Berhasil Dibuat!"
         message={`Anggota ${submittedUserData?.nama_lengkap} telah berhasil dibuat dan ditambahkan ke dalam sistem`}
         navigateText="Lihat Daftar Anggota"
-        autoNavigate={true}
+        autoNavigate={false}
         autoNavigateDelay={3000}
         showCredentials={true}
       />

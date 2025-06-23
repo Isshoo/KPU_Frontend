@@ -368,8 +368,8 @@ const InputSuratKeluarPage = () => {
         suratData={submittedSuratData}
         title="Surat Keluar Berhasil Ditambahkan!"
         message="Data surat keluar telah berhasil disimpan ke dalam sistem"
-        navigateText="Lihat Daftar Surat"
-        autoNavigate={true}
+        navigateText="Lihat Daftar Surat Keluar"
+        autoNavigate={false}
         autoNavigateDelay={3000}
       />
       

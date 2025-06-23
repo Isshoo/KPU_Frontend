@@ -193,7 +193,7 @@ const Select = styled.select`
 const TemplateSuratPage = () => {
   const navigate = useNavigate();
   const { toasts, showSuccess, showError, removeToast } = useToast();
-  const user = useSelector((state) => state.authUser);
+  const authUser = useSelector((state) => state.authUser);
   const [templates, setTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -206,6 +206,7 @@ const TemplateSuratPage = () => {
     ditujukan_kepada: '',
     perihal: '',
     keterangan: '',
+    divisi: authUser.divisi,
     lampiran: '',
     tujuan: '',
     lokasi_tujuan: '',
@@ -642,6 +643,7 @@ const TemplateSuratPage = () => {
       ditujukan_kepada: '',
       perihal: '',
       keterangan: '',
+      divisi: authUser.divisi,
       lampiran: '',
       tujuan: '',
       lokasi_tujuan: '',
@@ -828,6 +830,7 @@ const TemplateSuratPage = () => {
         selectedTemplate.id === 1 ? formData.tujuan : formData.nama_petugas
       );
       formDataToSend.append('perihal', formData.perihal);
+      formDataToSend.append('divisi', authUser.divisi);
       
       // Combine template-specific data into keterangan
       let keterangan = '';
@@ -1031,6 +1034,7 @@ const TemplateSuratPage = () => {
       ditujukan_kepada: '',
       perihal: '',
       keterangan: '',
+      divisi: authUser.divisi,
       lampiran: '',
       tujuan: '',
       lokasi_tujuan: '',
@@ -1071,7 +1075,7 @@ const TemplateSuratPage = () => {
         title="Surat Berhasil Dibuat!"
         message={`Surat ${submittedSuratData?.template_name} telah berhasil dibuat dan disimpan ke dalam sistem`}
         navigateText="Lihat Daftar Surat"
-        autoNavigate={true}
+        autoNavigate={false}
         autoNavigateDelay={3000}
       />
       

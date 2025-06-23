@@ -231,6 +231,7 @@ const PageTitle = styled.h2`
 
 const InputSuratKeluarPage = () => {
   const navigate = useNavigate();
+  const authUser = useSelector(state => state.authUser);
   const { toasts, showSuccess, showError, removeToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -242,6 +243,7 @@ const InputSuratKeluarPage = () => {
     ditujukan_kepada: '',
     perihal: '',
     keterangan: '',
+    divisi: authUser.divisi,
     file: null
   });
   const [errors, setErrors] = useState({});
@@ -345,6 +347,7 @@ const InputSuratKeluarPage = () => {
       ditujukan_kepada: '',
       perihal: '',
       keterangan: '',
+      divisi: authUser.divisi,
       file: null
     });
   };

@@ -231,6 +231,7 @@ const PageTitle = styled.h2`
 
 const InputSuratMasukPage = () => {
   const navigate = useNavigate();
+  const authUser = useSelector((state) => state.authUser);
   const { toasts, showSuccess, showError, removeToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -243,10 +244,10 @@ const InputSuratMasukPage = () => {
     perihal: '',
     ditujukan_kepada: '',
     keterangan: '',
+    divisi: authUser.divisi,
     file: null
   });
   const [errors, setErrors] = useState({});
-  const authUser = useSelector((state) => state.authUser);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -349,6 +350,7 @@ const InputSuratMasukPage = () => {
       perihal: '',
       ditujukan_kepada: '',
       keterangan: '',
+      divisi: authUser.divisi,
       file: null
     });
   };

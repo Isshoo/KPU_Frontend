@@ -285,7 +285,7 @@ const DaftarAnggotaPage = () => {
   const [role, setRole] = useState('');
   const [divisi, setDivisi] = useState('');
   const [pagination, setPagination] = useState({
-    page: 1,
+    current_page: 1,
     per_page: 10,
     total: 0,
     total_pages: 0
@@ -510,14 +510,14 @@ const DaftarAnggotaPage = () => {
           </PaginationInfo>
           <PaginationButtons>
             <PaginationButton
-              onClick={() => handlePageChange(pagination.page - 1)}
-              disabled={pagination.page === 1}
+              onClick={() => handlePageChange(pagination.current_page - 1)}
+              disabled={pagination.current_page === 1}
             >
               <FaChevronLeft /> Sebelumnya
             </PaginationButton>
             <PaginationButton
-              onClick={() => handlePageChange(pagination.page + 1)}
-              disabled={pagination.page === pagination.total_pages}
+              onClick={() => handlePageChange(pagination.current_page + 1)}
+              disabled={pagination.current_page === pagination.total_pages}
             >
               Selanjutnya <FaChevronRight />
             </PaginationButton>

@@ -273,6 +273,7 @@ const SearchBarComponent = memo(({ searchInput, onSearch, onDateChange, startDat
 
 const SuratMasukPage = () => {
   const navigate = useNavigate();
+  const authUser = useSelector(state => state.authUser);
   const { toasts, showSuccess, showError, removeToast } = useToast();
   const [suratMasuk, setSuratMasuk] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -290,7 +291,6 @@ const SuratMasukPage = () => {
     total: 0,
     total_pages: 0
   });
-  const authUser = useSelector((state) => state.authUser);
 
   const fetchSuratMasuk = async (page = 1) => {
     try {
@@ -306,7 +306,10 @@ const SuratMasukPage = () => {
       if (endDate) {
         url += `&end_date=${endDate}`;
       }
-
+      if (authUser.divisi) {
+        url += `&divisi=${authUser.divisi}`;
+      }
+      
       const response = await _fetchWithAuth(url);
       if (!response.ok) {
         throw new Error('Failed to fetch surat masuk');

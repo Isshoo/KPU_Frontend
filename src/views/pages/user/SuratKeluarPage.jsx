@@ -288,6 +288,7 @@ const SearchBarComponent = memo(({ searchInput, onSearch, onDateChange, startDat
 
 const SuratKeluarPage = () => {
   const navigate = useNavigate();
+  const authUser = useSelector(state => state.authUser);
   const { toasts, showSuccess, showError, removeToast } = useToast();
   const [suratKeluar, setSuratKeluar] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -319,6 +320,9 @@ const SuratKeluarPage = () => {
       }
       if (endDate) {
         url += `&end_date=${endDate}`;
+      }
+      if (authUser.divisi) {
+        url += `&divisi=${authUser.divisi}`;
       }
 
       const response = await _fetchWithAuth(url);

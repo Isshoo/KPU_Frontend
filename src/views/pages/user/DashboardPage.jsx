@@ -161,7 +161,7 @@ const DashboardPage = () => {
     try {
       setLoading(true);
       const [statsRes, suratMasukRes, suratKeluarRes] = await Promise.all([
-        _fetchWithAuth(`${BASE_URL}/dashboard/stats/`),
+        _fetchWithAuth(`${BASE_URL}/dashboard/stats/?divisi=${authUser.divisi || ''}`),
         _fetchWithAuth(`${BASE_URL}/surat-masuk/?limit=5`),
         _fetchWithAuth(`${BASE_URL}/surat-keluar/?limit=5`)
       ]);

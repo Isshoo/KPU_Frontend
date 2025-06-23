@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import styled from 'styled-components';
-import { FaBell, FaSearch, FaSignOutAlt, FaUser } from 'react-icons/fa';
+import styled, { keyframes } from 'styled-components';
+import { FaBell, FaSearch, FaSignOutAlt, FaUser, FaEnvelope, FaPaperPlane } from 'react-icons/fa';
 import { asyncUnsetAuthUser } from '../../../states/authUser/action';
+import { asyncReceiveNotifications, asyncMarkAsRead } from '../../../states/notifications/thunk';
+import { showFormattedDate } from '../../../utils/datetime_formatter';
 
 const HeaderContainer = styled.header`
   position: fixed;
@@ -77,7 +79,7 @@ const SearchBar = styled.div`
 const NavSection = styled.nav`
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 25px;
   margin-left: auto;
 `;
 
@@ -87,24 +89,111 @@ const NotificationIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #012970;
 
   svg {
-    font-size: 18px;
+    font-size: 20px;
+    transition: color 0.3s ease;
   }
   
   .badge {
     position: absolute;
-    top: -5px;
-    right: -5px;
-    background: #28a745;
+    top: -8px;
+    right: -10px;
+    background: #dc3545;
     color: white;
     border-radius: 50%;
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
     font-size: 12px;
+    font-weight: 600;
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 2px solid white;
+    transform: scale(1);
+    transition: transform 0.2s ease;
+  }
+
+  &:hover {
+    color: #4154f1;
+    .badge {
+      transform: scale(1.1);
+    }
+  }
+`;
+
+const NotificationDropdown = styled.div`
+  position: absolute;
+  top: calc(100% + 15px);
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  width: 350px;
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 1010;
+
+  .dropdown-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+    
+    h6 {
+      margin: 0;
+      font-size: 16px;
+      color: #012970;
+    }
+  }
+  
+  .notification-item {
+    padding: 12px 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    color: #012970;
+    text-decoration: none;
+    cursor: pointer;
+    border-bottom: 1px solid #f8f9fa;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background: #f6f9ff;
+    }
+
+    .icon {
+      font-size: 24px;
+      color: #4154f1;
+      margin-top: 4px;
+    }
+
+    .content {
+      flex: 1;
+      h4 {
+        margin: 0 0 4px 0;
+        font-size: 14px;
+        font-weight: 600;
+      }
+      p {
+        margin: 0 0 4px 0;
+        font-size: 13px;
+        color: #555;
+        line-height: 1.4;
+      }
+      span {
+        font-size: 11px;
+        color: #899bbd;
+      }
+    }
+  }
+  
+  .empty-state {
+    padding: 20px;
+    text-align: center;
+    color: #899bbd;
   }
 `;
 
@@ -113,6 +202,7 @@ const ProfileSection = styled.div`
   align-items: center;
   gap: 10px;
   cursor: pointer;
+  position: relative;
 
   svg {
     font-size: 16px;
@@ -174,30 +264,64 @@ const DropdownMenu = styled.div`
 
 const HeaderBar = () => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showNotificationMenu, setShowNotificationMenu] = useState(false);
+
   const authUser = useSelector((state) => state.authUser);
+  const { notifications, unreadCount } = useSelector((state) => state.notifications);
+
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const profileRef = useRef(null);
+  const notificationRef = useRef(null);
+
+  // Fetch notifications periodically
+  useEffect(() => {
+    if (authUser) {
+      dispatch(asyncReceiveNotifications()); // Fetch immediately on login
+
+      const interval = setInterval(() => {
+        dispatch(asyncReceiveNotifications());
+      }, 30000); // Poll every 30 seconds
+
+      return () => clearInterval(interval);
+    }
+  }, [authUser, dispatch]);
 
   const onSignOut = () => {
     dispatch(asyncUnsetAuthUser());
   };
 
-  // Close profile menu when clicking outside
+  // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (profileRef.current && !profileRef.current.contains(event.target)) {
         setShowProfileMenu(false);
       }
+      if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+        setShowNotificationMenu(false);
+      }
     };
 
-    if (showProfileMenu) {
+    if (showProfileMenu || showNotificationMenu) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showProfileMenu]);
+  }, [showProfileMenu, showNotificationMenu]);
+
+  const handleNotificationClick = (notification) => {
+    dispatch(asyncMarkAsRead(notification));
+    setShowNotificationMenu(false);
+
+    const destination = notification.type === 'surat_masuk' 
+      ? `/surat-masuk/surat/${notification.surat_id}` 
+      : `/surat-keluar/surat/${notification.surat_id}`;
+      
+    navigate(destination);
+  };
 
   const getRoleName = (role) => {
     switch (role) {
@@ -235,10 +359,41 @@ const HeaderBar = () => {
       </LogoSection>
       
       <NavSection>
-        {/* <NotificationIcon>
+        <NotificationIcon 
+          ref={notificationRef}
+          onClick={() => setShowNotificationMenu(!showNotificationMenu)}
+        >
           <FaBell />
-          <span className="badge">3</span>
-        </NotificationIcon> */}
+          {unreadCount > 0 && <span className="badge">{unreadCount}</span>}
+
+          {showNotificationMenu && (
+            <NotificationDropdown>
+              <div className="dropdown-header">
+                <h6>Anda memiliki {unreadCount} notifikasi baru</h6>
+              </div>
+              {notifications && notifications.length > 0 ? (
+                notifications.map((notif) => (
+                  <div 
+                    key={notif.id} 
+                    className="notification-item" 
+                    onClick={() => handleNotificationClick(notif)}
+                  >
+                    <div className="icon">
+                      {notif.type === 'surat_masuk' ? <FaEnvelope /> : <FaPaperPlane />}
+                    </div>
+                    <div className="content">
+                      <h4>{notif.title}</h4>
+                      <p>{notif.message}</p>
+                      <span>{showFormattedDate(notif.date)}</span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="empty-state">Tidak ada notifikasi</div>
+              )}
+            </NotificationDropdown>
+          )}
+        </NotificationIcon>
         
         <ProfileSection 
           ref={profileRef}

@@ -1,4 +1,4 @@
-const showFormattedDate = (date, locale = '') => {
+const showFormattedDate = (date, locale = 'ID') => {
   const now = new Date();
   const inputDate = new Date(date);
   const diff = now - inputDate;
@@ -11,16 +11,16 @@ const showFormattedDate = (date, locale = '') => {
   const years = Math.floor(days / 365);
 
   if (locale === 'ID') {
-    if (seconds < 60) return 'baru saja';
-    if (minutes < 60) return `${minutes}m lalu`;
-    if (hours < 24) return `${hours}j lalu`;
+    // if (seconds < 60) return 'baru saja';
+    // if (minutes < 60) return `${minutes}m lalu`;
+    if (hours < 24) return `Hari ini`;
     if (days < 30) return `${days}h lalu`;
     if (months < 12) return `${months}bln lalu`;
     return `${years}thn lalu`;
   }
 
-  if (seconds < 60) return 'just now';
-  if (minutes < 60) return `${minutes}m ago`;
+  // if (seconds < 60) return 'just now';
+  // if (minutes < 60) return `${minutes}m ago`;
   if (hours < 24) return `${hours}h ago`;
   if (days < 30) return `${days}d ago`;
   if (months < 12) return `${months}mo ago`;
@@ -40,5 +40,12 @@ const formatUnixTimestamp = (timestamp) => {
   return new Intl.DateTimeFormat('id-ID', options).format(date);
 };
 
-export { showFormattedDate, formatISODate, formatUnixTimestamp };
+const timeAgo = (date) => {
+  const now = new Date();
+  const inputDate = new Date(date);
+  const diff = now - inputDate;
+  return showFormattedDate(diff);
+};
+
+export { showFormattedDate, formatISODate, formatUnixTimestamp, timeAgo };
 

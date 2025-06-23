@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { FaHome, FaEnvelope, FaEnvelopeOpen, FaUsers, FaUserCircle } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
 
 const SidebarContainer = styled.aside`
   position: fixed;
@@ -13,6 +14,18 @@ const SidebarContainer = styled.aside`
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
   z-index: 999;
   overflow-y: auto;
+
+  .divisi-name {
+    text-align: center;
+    border-bottom: 1px solid #012970;
+    padding-bottom: 10px;
+  }
+
+  .divisi-name span {
+    font-size: 16px;
+    font-weight: 600;
+    color: #012970;
+  }
 `;
 
 const NavList = styled.ul`
@@ -56,6 +69,21 @@ const NavItem = styled.li`
 
 const SideBar = () => {
   const location = useLocation();
+  const authUser = useSelector(state => state.authUser);
+  const getDivisiName = (divisi) => {
+    switch (divisi) {
+      case 'teknis_dan_hukum':
+        return 'Teknis dan Hukum';
+      case 'data_dan_informasi':
+        return 'Data dan Informasi';
+      case 'logistik_dan_keuangan':
+        return 'Logistik dan Keuangan';
+      case 'sdm_dan_parmas':
+        return 'SDM dan Parmas';
+      default:
+        return divisi;
+    }
+  }
   
   const isActive = (path) => {
     return location.pathname.includes(path);
@@ -64,6 +92,11 @@ const SideBar = () => {
   return (
     <SidebarContainer>
       <NavList>
+      {authUser.role !== 'sekertaris' && (
+        <p className="divisi-name">
+          <span>{getDivisiName(authUser.divisi)}</span>
+        </p>
+      )}
         <NavItem>
           <Link to="/dashboard" className={isActive('dashboard') ? 'active' : ''}>
             <FaHome />

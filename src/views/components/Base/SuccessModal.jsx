@@ -324,7 +324,11 @@ const SuccessModal = ({
           </SuratNumber>
           <SuratDetails>
             <div><strong>Perihal:</strong> {suratData.perihal || '-'}</div>
-            <div><strong>Pengirim:</strong> {suratData.pengirim || '-'}</div>
+            {suratData.pengirim ? (
+              <div><strong>Pengirim:</strong> {suratData.pengirim || '-'}</div>
+            ) : (
+              <div><strong>Ditujukan Kepada:</strong> {suratData.ditujukan_kepada || '-'}</div>
+            )}
             <div><strong>Tanggal Surat:</strong> {suratData.tanggal_surat ? new Date(suratData.tanggal_surat).toLocaleDateString('id-ID') : '-'}</div>
           </SuratDetails>
         </SuratInfo>
@@ -353,7 +357,7 @@ const SuccessModal = ({
             <MessageText>
               {showCredentials 
                 ? 'Anggota telah berhasil ditambahkan ke dalam sistem.'
-                : 'Surat masuk telah berhasil ditambahkan ke dalam sistem.'
+                : 'Surat telah berhasil ditambahkan ke dalam sistem.'
               }
             </MessageText>
 

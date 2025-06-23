@@ -1073,7 +1073,7 @@ const TemplateSuratPage = () => {
         onNavigate={handleSuccessNavigate}
         suratData={submittedSuratData}
         title="Surat Berhasil Dibuat!"
-        message={`Surat ${submittedSuratData?.template_name} telah berhasil dibuat dan disimpan ke dalam sistem`}
+        message={`${submittedSuratData?.template_name} telah berhasil dibuat dan disimpan ke dalam sistem`}
         navigateText="Lihat Daftar Surat"
         autoNavigate={false}
         autoNavigateDelay={3000}

@@ -6,6 +6,8 @@ import { FaBell, FaSearch, FaSignOutAlt, FaUser, FaEnvelope, FaPaperPlane } from
 import { asyncUnsetAuthUser } from '../../../states/authUser/action';
 import { asyncReceiveNotifications, asyncMarkAsRead } from '../../../states/notifications/thunk';
 import { showFormattedDate } from '../../../utils/datetime_formatter';
+import { BASE_URL } from '../../../globals/config';
+import { _fetchWithAuth } from '../../../utils/auth_helper';
 
 const HeaderContainer = styled.header`
   position: fixed;
@@ -280,11 +282,11 @@ const HeaderBar = () => {
     if (authUser) {
       dispatch(asyncReceiveNotifications()); // Fetch immediately on login
 
-      const interval = setInterval(() => {
-        dispatch(asyncReceiveNotifications());
-      }, 30000); // Poll every 30 seconds
+      // const interval = setInterval(() => {
+      //   dispatch(asyncReceiveNotifications());
+      // }, 30000); // Poll every 30 seconds
 
-      return () => clearInterval(interval);
+      // return () => clearInterval(interval);
     }
   }, [authUser, dispatch]);
 
@@ -312,15 +314,25 @@ const HeaderBar = () => {
     };
   }, [showProfileMenu, showNotificationMenu]);
 
-  const handleNotificationClick = (notification) => {
+  const handleNotificationClick = async (notification) => {
     dispatch(asyncMarkAsRead(notification));
     setShowNotificationMenu(false);
+    await dispatch(asyncReceiveNotifications());
 
-    const destination = notification.type === 'surat_masuk' 
-      ? `/surat-masuk/surat/${notification.surat_id}` 
-      : `/surat-keluar/surat/${notification.surat_id}`;
-      
-    navigate(destination);
+    const endpoint = notification.type === 'surat_masuk'
+      ? `${BASE_URL}/surat-masuk/${notification.surat_id}/file`
+      : `${BASE_URL}/surat-keluar/${notification.surat_id}/file`;
+    try {
+      const response = await _fetchWithAuth(endpoint);
+      if (!response.ok) {
+        throw new Error('Gagal membuka file surat');
+      }
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      window.open(url, '_blank');
+    } catch (err) {
+      alert('Gagal membuka file surat.');
+    }
   };
 
   const getRoleName = (role) => {

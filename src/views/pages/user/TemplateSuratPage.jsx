@@ -836,10 +836,10 @@ const TemplateSuratPage = () => {
       let keterangan = '';
       if (selectedTemplate.id === 1) {
         // Surat Undangan
-        keterangan = `Tujuan: ${formData.tujuan}\nLokasi: ${formData.lokasi_tujuan}\nAlasan: ${formData.alasan}\nHari/Tanggal: ${formData.hari_tanggal}\nWaktu: ${formData.waktu}\nTempat: ${formData.tempat}\nAgenda: ${formData.agenda_items.join(', ')}\nPenerima: ${formData.penerima}\nWaktu Kedatangan: ${formData.waktu_kedatangan}\n\nPenandatangan:\nNama: ${formData.nama_penandatangan}\nJabatan: ${formData.jabatan_penandatangan}`;
+        keterangan = `${formData.alasan}`;
       } else if (selectedTemplate.id === 2) {
         // Surat Tugas
-        keterangan = `Nama Petugas: ${formData.nama_petugas}\nJabatan: ${formData.jabatan_petugas}\nTugas: ${formData.tugas}\nLokasi: ${formData.lokasi_tugas}\nWaktu: ${formData.waktu_tugas}\nDurasi: ${formData.durasi_tugas}${formData.bekal_tugas ? '\nBekal: ' + formData.bekal_tugas : ''}\n\nPenandatangan:\nNama: ${formData.nama_penandatangan}\nJabatan: ${formData.jabatan_penandatangan}`;
+        keterangan = `${formData.tugas}`;
       }
       formDataToSend.append('keterangan', keterangan);
 

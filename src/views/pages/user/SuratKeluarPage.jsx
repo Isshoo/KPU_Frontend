@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback, memo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { FaEye, FaFileDownload, FaChevronLeft, FaChevronRight, FaSearch, FaCalendar, FaPlus, FaTrash } from 'react-icons/fa';
+import { FaEye, FaFileDownload, FaChevronLeft, FaChevronRight, FaSearch, FaCalendar, FaPlus, FaTrash, FaBuilding } from 'react-icons/fa';
 import Layout from '../../components/Base/Layout';
 import Toast from '../../components/Base/Toast';
 import DeleteConfirmationModal from '../../components/Base/DeleteConfirmationModal';
@@ -48,6 +48,23 @@ const SearchBar = styled.div`
     &:focus {
       outline: none;
       border-color: #4154f1;
+    }
+  }
+
+  .divisi-input {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+
+    select {
+      border: none;
+      padding: 0;
+      cursor: pointer;
     }
   }
 
@@ -227,8 +244,16 @@ const ErrorMessage = styled.div`
   font-size: 14px;
 `;
 
-const SearchBarComponent = memo(({ searchInput, onSearch, onDateChange, startDate, endDate }) => {
+const SearchBarComponent = memo(({ searchInput, onSearch, onDateChange, startDate, endDate, onDivisiChange, divisi }) => {
   const inputRef = useRef(null);
+  const authUser = useSelector(state => state.authUser);
+
+  const divisiOptions = [
+    { value: 'teknis_dan_hukum', label: 'Teknis dan Hukum' },
+    { value: 'data_dan_informasi', label: 'Data dan Informasi' },
+    { value: 'logistik_dan_keuangan', label: 'Logistik dan Keuangan' },
+    { value: 'sdm_dan_parmas', label: 'SDM dan Parmas' }
+  ];
   
   const debouncedSetSearchTerm = useCallback(
     debounce((value) => {
@@ -262,6 +287,21 @@ const SearchBarComponent = memo(({ searchInput, onSearch, onDateChange, startDat
           }
         }}
       />
+      {/* divisi dropdown */}
+      {authUser.role === 'sekertaris' && (
+        <div className="divisi-input">
+          <FaBuilding />
+          <select
+            value={divisi}
+            onChange={(e) => onDivisiChange(e.target.value)}
+          >
+            <option value="">Pilih Divisi</option>
+            {divisiOptions.map((option) => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
+          </select>
+        </div>
+      )}
       <div className="date-inputs">
         <div className="date-input">
           <FaCalendar />
@@ -297,6 +337,7 @@ const SuratKeluarPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [divisi, setDivisi] = useState('');
   const [deletingId, setDeletingId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedSurat, setSelectedSurat] = useState(null);
@@ -324,6 +365,9 @@ const SuratKeluarPage = () => {
       if (authUser.divisi) {
         url += `&divisi=${authUser.divisi}`;
       }
+      if (divisi) {
+        url += `&divisi=${divisi}`;
+      }
 
       const response = await _fetchWithAuth(url);
       if (!response.ok) {
@@ -342,7 +386,7 @@ const SuratKeluarPage = () => {
 
   useEffect(() => {
     fetchSuratKeluar();
-  }, [searchTerm, startDate, endDate]);
+  }, [searchTerm, startDate, endDate, divisi]);
 
   const handleView = async (id) => {
     try {
@@ -440,6 +484,26 @@ const SuratKeluarPage = () => {
     setPagination(prev => ({ ...prev, page: 1 }));
   }, []);
 
+  const handleDivisiChange = useCallback((value) => {
+    setDivisi(value);
+    setPagination(prev => ({ ...prev, page: 1 }));
+  }, []);
+
+  const getDivisiName = (divisi) => {
+    switch (divisi) {
+      case 'teknis_dan_hukum':
+        return 'Teknis dan Hukum';
+      case 'data_dan_informasi':
+        return 'Data dan Informasi';
+      case 'logistik_dan_keuangan':
+        return 'Logistik dan Keuangan';
+      case 'sdm_dan_parmas':
+        return 'SDM dan Parmas';
+      default:
+        return divisi;
+    }
+  };
+
   if (loading) {
     return (
       <Layout>
@@ -481,6 +545,8 @@ const SuratKeluarPage = () => {
           onDateChange={handleDateChange}
           startDate={startDate}
           endDate={endDate}
+          onDivisiChange={handleDivisiChange}
+          divisi={divisi}
         />
 
         <Table>
@@ -492,6 +558,7 @@ const SuratKeluarPage = () => {
               <TableHeader>Ditujukan Kepada</TableHeader>
               <TableHeader>Perihal</TableHeader>
               <TableHeader>Keterangan</TableHeader>
+              {authUser.role === 'sekertaris' && <TableHeader>Divisi</TableHeader>}
               <TableHeader>Aksi</TableHeader>
             </tr>
           </thead>
@@ -504,6 +571,7 @@ const SuratKeluarPage = () => {
                 <TableCell>{surat.ditujukan_kepada}</TableCell>
                 <TableCell>{surat.perihal}</TableCell>
                 <TableCell>{surat.keterangan || '-'}</TableCell>
+                {authUser.role === 'sekertaris' && <TableCell>{getDivisiName(surat.divisi)}</TableCell>}
                 <TableCell>
                   <ActionButton 
                     className="primary" 

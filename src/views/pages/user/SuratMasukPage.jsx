@@ -576,6 +576,7 @@ const SuratMasukPage = () => {
                   >
                     <FaFileDownload /> Download
                   </ActionButton>
+                  {authUser.role === 'staf' && (
                   <ActionButton 
                     className="danger" 
                     onClick={() => handleDeleteClick(surat)}
@@ -585,6 +586,7 @@ const SuratMasukPage = () => {
                     <FaTrash /> 
                     {deletingId === surat.id ? 'Menghapus...' : 'Hapus'}
                   </ActionButton>
+                  )}
                 </TableCell>
               </tr>
             ))}

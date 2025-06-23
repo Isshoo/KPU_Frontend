@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -176,9 +176,28 @@ const HeaderBar = () => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const authUser = useSelector((state) => state.authUser);
   const dispatch = useDispatch();
+  const profileRef = useRef(null);
+
   const onSignOut = () => {
     dispatch(asyncUnsetAuthUser());
   };
+
+  // Close profile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setShowProfileMenu(false);
+      }
+    };
+
+    if (showProfileMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showProfileMenu]);
 
   const getRoleName = (role) => {
     switch (role) {
@@ -215,22 +234,16 @@ const HeaderBar = () => {
         <span>KPU Kota Manado</span>
       </LogoSection>
       
-      {/* <SearchBar>
-        <form>
-          <input type="text" placeholder="Search" />
-          <button type="submit">
-            <FaSearch />
-          </button>
-        </form>
-      </SearchBar> */}
-      
       <NavSection>
         {/* <NotificationIcon>
           <FaBell />
           <span className="badge">3</span>
         </NotificationIcon> */}
         
-        <ProfileSection onClick={() => setShowProfileMenu(!showProfileMenu)}>
+        <ProfileSection 
+          ref={profileRef}
+          onClick={() => setShowProfileMenu(!showProfileMenu)}
+        >
           <FaUser />
           <span>{authUser?.nama_lengkap}</span>
           

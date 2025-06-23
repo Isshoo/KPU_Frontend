@@ -555,8 +555,8 @@ const SuratKeluarPage = () => {
               <TableHeader>No. Surat</TableHeader>
               <TableHeader>Tanggal Surat</TableHeader>
               <TableHeader>Tanggal Kirim</TableHeader>
-              <TableHeader>Ditujukan Kepada</TableHeader>
               <TableHeader>Perihal</TableHeader>
+              <TableHeader>Ditujukan Kepada</TableHeader>
               <TableHeader>Keterangan</TableHeader>
               {authUser.role === 'sekertaris' && <TableHeader>Divisi</TableHeader>}
               <TableHeader>Aksi</TableHeader>
@@ -568,8 +568,8 @@ const SuratKeluarPage = () => {
                 <TableCell>{surat.nomor_surat}</TableCell>
                 <TableCell>{new Date(surat.tanggal_surat).toLocaleDateString('id-ID')}</TableCell>
                 <TableCell>{new Date(surat.tanggal_kirim).toLocaleDateString('id-ID')}</TableCell>
-                <TableCell>{surat.ditujukan_kepada}</TableCell>
                 <TableCell>{surat.perihal}</TableCell>
+                <TableCell>{surat.ditujukan_kepada}</TableCell>
                 <TableCell>{surat.keterangan || '-'}</TableCell>
                 {authUser.role === 'sekertaris' && <TableCell>{getDivisiName(surat.divisi)}</TableCell>}
                 <TableCell>
@@ -587,6 +587,7 @@ const SuratKeluarPage = () => {
                   >
                     <FaFileDownload /> Download
                   </ActionButton>
+                  {authUser.role === 'staf' && (
                   <ActionButton 
                     className="danger" 
                     onClick={() => handleDeleteClick(surat)}
@@ -596,6 +597,7 @@ const SuratKeluarPage = () => {
                     <FaTrash /> 
                     {deletingId === surat.id ? 'Menghapus...' : 'Hapus'}
                   </ActionButton>
+                  )}
                 </TableCell>
               </tr>
             ))}

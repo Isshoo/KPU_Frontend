@@ -4,6 +4,9 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { FaEye, FaEdit, FaTrash, FaChevronLeft, FaChevronRight, FaSearch, FaPlus } from 'react-icons/fa';
 import Layout from '../../components/Base/Layout';
+import Toast from '../../components/Base/Toast';
+import DeleteConfirmationModal from '../../components/Base/DeleteConfirmationModal';
+import useToast from '../../../hooks/useToast';
 import { BASE_URL } from '../../../globals/config';
 import { _fetchWithAuth } from '../../../utils/auth_helper';
 import debounce from 'lodash/debounce';
@@ -97,25 +100,51 @@ const ActionButton = styled.button`
   align-items: center;
   gap: 5px;
   font-size: 14px;
+  font-weight: 500;
   transition: all 0.3s ease;
 
   &.primary {
     background-color: #0d6efd;
     color: white;
+    
+    &:hover:not(:disabled) {
+      background-color: #0b5ed7;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
+    }
   }
 
   &.warning {
     background-color: #ffc107;
     color: #000;
+    
+    &:hover:not(:disabled) {
+      background-color: #e0a800;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
+    }
   }
 
   &.danger {
     background-color: #dc3545;
     color: white;
+    
+    &:hover:not(:disabled) {
+      background-color: #c82333;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+    }
   }
 
-  &:hover {
-    opacity: 0.9;
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
   }
 `;
 
@@ -247,6 +276,7 @@ const SearchBarComponent = memo(({ searchInput, onSearch, onFilterChange, role, 
 
 const DaftarAnggotaPage = () => {
   const navigate = useNavigate();
+  const { toasts, showSuccess, showError, removeToast } = useToast();
   const [anggota, setAnggota] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -260,6 +290,9 @@ const DaftarAnggotaPage = () => {
     total: 0,
     total_pages: 0
   });
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedAnggota, setSelectedAnggota] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const authUser = useSelector((state) => state.authUser);
 
   const fetchAnggota = async (page = 1) => {
@@ -286,6 +319,7 @@ const DaftarAnggotaPage = () => {
       setPagination(data.pagination);
     } catch (err) {
       setError(err.message);
+      showError('Gagal!', 'Terjadi kesalahan saat mengambil data anggota');
     } finally {
       setLoading(false);
     }
@@ -318,20 +352,40 @@ const DaftarAnggotaPage = () => {
     navigate(`/profile/${id}/edit`);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus anggota ini?')) {
-      try {
-        const response = await _fetchWithAuth(`${BASE_URL}/users/${id}`, {
-          method: 'DELETE'
-        });
-        if (!response.ok) {
-          throw new Error('Failed to delete anggota');
-        }
-        fetchAnggota(pagination.page);
-      } catch (err) {
-        console.error('Error deleting anggota:', err);
+  const handleDelete = (anggota) => {
+    setSelectedAnggota(anggota);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!selectedAnggota) return;
+
+    try {
+      setDeleteLoading(true);
+      const response = await _fetchWithAuth(`${BASE_URL}/users/${selectedAnggota.id}`, {
+        method: 'DELETE'
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to delete anggota');
       }
+
+      showSuccess('Berhasil!', `Anggota ${selectedAnggota.nama_lengkap} berhasil dihapus`);
+      setShowDeleteModal(false);
+      setSelectedAnggota(null);
+      fetchAnggota(pagination.page);
+    } catch (err) {
+      console.error('Error deleting anggota:', err);
+      showError('Gagal!', err.message || 'Terjadi kesalahan saat menghapus anggota');
+    } finally {
+      setDeleteLoading(false);
     }
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteModal(false);
+    setSelectedAnggota(null);
   };
 
   const handlePageChange = (newPage) => {
@@ -378,6 +432,23 @@ const DaftarAnggotaPage = () => {
 
   return (
     <Layout>
+      {/* Toast Notifications */}
+      <Toast toasts={toasts} onClose={removeToast} />
+      
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={cancelDelete}
+        onConfirm={confirmDelete}
+        loading={deleteLoading}
+        title="Hapus Anggota"
+        message={`Apakah Anda yakin ingin menghapus anggota ini?`}
+        confirmText="Hapus"
+        cancelText="Batal"
+        anggotaData={selectedAnggota}
+        type="anggota"
+      />
+      
       <Card>
         {/* <Header>
           <Title>Daftar Anggota</Title>
@@ -423,7 +494,7 @@ const DaftarAnggotaPage = () => {
                 </TableCell>
                 {authUser?.role === 'sekertaris' && (
                   <TableCell>
-                    <ActionButton className="danger" onClick={() => handleDelete(user.id)}>
+                    <ActionButton className="danger" onClick={() => handleDelete(user)}>
                       <FaTrash /> Hapus
                     </ActionButton>
                   </TableCell>

@@ -215,8 +215,14 @@ const DeleteConfirmationModal = ({
   isOpen, 
   onClose, 
   onConfirm, 
-  suratData, 
-  isLoading = false 
+  suratData,
+  anggotaData,
+  type = 'surat',
+  title = 'Konfirmasi Penghapusan',
+  message = 'Anda akan menghapus item berikut:',
+  confirmText = 'Hapus',
+  cancelText = 'Batal',
+  loading = false 
 }) => {
   if (!isOpen) return null;
 
@@ -225,15 +231,79 @@ const DeleteConfirmationModal = ({
   };
 
   const handleClose = () => {
-    if (!isLoading) {
+    if (!loading) {
       onClose();
     }
   };
 
   const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget && !isLoading) {
+    if (e.target === e.currentTarget && !loading) {
       onClose();
     }
+  };
+
+  const getModalSubtitle = () => {
+    switch (type) {
+      case 'anggota':
+        return 'Hapus anggota dari sistem';
+      case 'surat':
+      default:
+        return 'Hapus surat dari sistem';
+    }
+  };
+
+  const getWarningMessage = () => {
+    switch (type) {
+      case 'anggota':
+        return 'Peringatan: Tindakan ini tidak dapat dibatalkan. Anggota dan data terkait akan dihapus secara permanen dari sistem.';
+      case 'surat':
+      default:
+        return 'Peringatan: Tindakan ini tidak dapat dibatalkan. Surat dan file terkait akan dihapus secara permanen dari sistem.';
+    }
+  };
+
+  const getConfirmButtonText = () => {
+    switch (type) {
+      case 'anggota':
+        return loading ? 'Menghapus...' : 'Hapus Anggota';
+      case 'surat':
+      default:
+        return loading ? 'Menghapus...' : 'Hapus Surat';
+    }
+  };
+
+  const renderItemInfo = () => {
+    if (type === 'anggota' && anggotaData) {
+      return (
+        <SuratInfo>
+          <SuratNumber>
+            {anggotaData.nama_lengkap || 'Nama Anggota'}
+          </SuratNumber>
+          <SuratDetails>
+            <div><strong>Username:</strong> {anggotaData.username || '-'}</div>
+            <div><strong>Role:</strong> {anggotaData.role || '-'}</div>
+            <div><strong>Divisi:</strong> {anggotaData.divisi || '-'}</div>
+          </SuratDetails>
+        </SuratInfo>
+      );
+    }
+
+    if (type === 'surat' && suratData) {
+      return (
+        <SuratInfo>
+          <SuratNumber>
+            {suratData.nomor_surat || 'Nomor Surat'}
+          </SuratNumber>
+          <SuratDetails>
+            <div><strong>Perihal:</strong> {suratData.perihal || '-'}</div>
+            <div><strong>Pengirim:</strong> {suratData.pengirim || '-'}</div>
+            <div><strong>Tanggal Surat:</strong> {suratData.tanggal_surat ? new Date(suratData.tanggal_surat).toLocaleDateString('id-ID') : '-'}</div>
+          </SuratDetails>
+        </SuratInfo>
+      );
+    }
+
+    return null;
   };
 
   return (
@@ -244,10 +314,10 @@ const DeleteConfirmationModal = ({
             <FaExclamationTriangle />
           </WarningIcon>
           <HeaderContent>
-            <ModalTitle>Konfirmasi Penghapusan</ModalTitle>
-            <ModalSubtitle>Hapus surat masuk dari sistem</ModalSubtitle>
+            <ModalTitle>{title}</ModalTitle>
+            <ModalSubtitle>{getModalSubtitle()}</ModalSubtitle>
           </HeaderContent>
-          <CloseButton onClick={handleClose} disabled={isLoading}>
+          <CloseButton onClick={handleClose} disabled={loading}>
             <FaTimes />
           </CloseButton>
         </ModalHeader>
@@ -255,25 +325,15 @@ const DeleteConfirmationModal = ({
         <ModalBody>
           <ConfirmationText>
             <p style={{ margin: '0 0 16px 0', color: '#495057', lineHeight: '1.6' }}>
-              Anda akan menghapus surat masuk berikut:
+              {message}
             </p>
 
-            <SuratInfo>
-              <SuratNumber>
-                {suratData?.nomor_surat || 'Nomor Surat'}
-              </SuratNumber>
-              <SuratDetails>
-                <div><strong>Perihal:</strong> {suratData?.perihal || '-'}</div>
-                <div><strong>Pengirim:</strong> {suratData?.pengirim || '-'}</div>
-                <div><strong>Tanggal Surat:</strong> {suratData?.tanggal_surat ? new Date(suratData.tanggal_surat).toLocaleDateString('id-ID') : '-'}</div>
-              </SuratDetails>
-            </SuratInfo>
+            {renderItemInfo()}
 
             <WarningMessage>
               <FaExclamationTriangle style={{ color: '#f39c12' }} />
               <span>
-                <strong>Peringatan:</strong> Tindakan ini tidak dapat dibatalkan. 
-                Surat dan file terkait akan dihapus secara permanen dari sistem.
+                <strong>Peringatan:</strong> {getWarningMessage()}
               </span>
             </WarningMessage>
           </ConfirmationText>
@@ -282,17 +342,17 @@ const DeleteConfirmationModal = ({
             <Button 
               className="cancel" 
               onClick={handleClose}
-              disabled={isLoading}
+              disabled={loading}
             >
-              Batal
+              {cancelText}
             </Button>
             <Button 
               className="delete" 
               onClick={handleConfirm}
-              disabled={isLoading}
+              disabled={loading}
             >
               <FaTrash />
-              {isLoading ? 'Menghapus...' : 'Hapus Surat'}
+              {getConfirmButtonText()}
             </Button>
           </ButtonContainer>
         </ModalBody>

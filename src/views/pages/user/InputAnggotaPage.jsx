@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { FaArrowLeft } from 'react-icons/fa';
 import Layout from '../../components/Base/Layout';
+import Toast from '../../components/Base/Toast';
+import SuccessModal from '../../components/Base/SuccessModal';
+import useToast from '../../../hooks/useToast';
 import { BASE_URL } from '../../../globals/config';
 import { _fetchWithAuth } from '../../../utils/auth_helper';
 
@@ -99,15 +102,24 @@ const SubmitButton = styled.button`
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
+  font-weight: 500;
   transition: all 0.3s ease;
 
-  &:hover {
-    opacity: 0.9;
+  &:hover:not(:disabled) {
+    background-color: #3a47d8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(65, 84, 241, 0.3);
   }
 
   &:disabled {
     background-color: #ccc;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
   }
 `;
 
@@ -119,10 +131,17 @@ const CancelButton = styled.button`
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
+  font-weight: 500;
   transition: all 0.3s ease;
 
-  &:hover {
-    opacity: 0.9;
+  &:hover:not(:disabled) {
+    background-color: #c82333;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
   }
 `;
 
@@ -134,6 +153,7 @@ const ErrorMessage = styled.div`
 
 const InputAnggotaPage = () => {
   const navigate = useNavigate();
+  const { toasts, showSuccess, showError, removeToast } = useToast();
   const [formData, setFormData] = useState({
     nama_lengkap: '',
     role: '',
@@ -142,6 +162,8 @@ const InputAnggotaPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [errors, setErrors] = useState({});
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [submittedUserData, setSubmittedUserData] = useState(null);
 
   const validateForm = () => {
     const newErrors = {};
@@ -183,13 +205,41 @@ const InputAnggotaPage = () => {
       }
 
       const data = await response.json();
-      alert(`User berhasil dibuat!\nUsername: ${data.user.username}\nPassword: ${data.user.username}`);
-      navigate('/daftar-anggota');
+      
+      // Set success data and show modal
+      setSubmittedUserData({
+        nama_lengkap: formData.nama_lengkap,
+        username: data.user.username,
+        password: data.user.username,
+        role: formData.role,
+        divisi: formData.divisi
+      });
+      setShowSuccessModal(true);
+      
     } catch (err) {
-      setError(err.message);
+      console.error('Error creating user:', err);
+      showError('Gagal!', err.message || 'Terjadi kesalahan saat membuat user');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSuccessClose = () => {
+    setShowSuccessModal(false);
+    setSubmittedUserData(null);
+    // Reset form
+    setFormData({
+      nama_lengkap: '',
+      role: '',
+      divisi: null
+    });
+    setErrors({});
+  };
+
+  const handleSuccessNavigate = () => {
+    setShowSuccessModal(false);
+    setSubmittedUserData(null);
+    navigate('/daftar-anggota');
   };
 
   const handleChange = (e) => {
@@ -209,8 +259,24 @@ const InputAnggotaPage = () => {
 
   return (
     <Layout>
+      {/* Toast Notifications */}
+      <Toast toasts={toasts} onClose={removeToast} />
+      
+      {/* Success Modal */}
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={handleSuccessClose}
+        onNavigate={handleSuccessNavigate}
+        suratData={submittedUserData}
+        title="Anggota Berhasil Dibuat!"
+        message={`Anggota ${submittedUserData?.nama_lengkap} telah berhasil dibuat dan ditambahkan ke dalam sistem`}
+        navigateText="Lihat Daftar Anggota"
+        autoNavigate={true}
+        autoNavigateDelay={3000}
+        showCredentials={true}
+      />
+      
       <Card>
-
         <Form onSubmit={handleSubmit}>
           <FormGroup>
             <Label htmlFor="nama_lengkap">Nama Lengkap</Label>

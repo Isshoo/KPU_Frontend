@@ -270,7 +270,8 @@ const SuccessModal = ({
   message = "Data berhasil disimpan",
   navigateText = "Lihat Daftar",
   autoNavigate = true,
-  autoNavigateDelay = 3000
+  autoNavigateDelay = 3000,
+  showCredentials = false
 }) => {
   useEffect(() => {
     if (isOpen && autoNavigate) {
@@ -298,6 +299,41 @@ const SuccessModal = ({
     }
   };
 
+  const renderItemInfo = () => {
+    if (showCredentials && suratData) {
+      return (
+        <SuratInfo>
+          <SuratNumber>
+            {suratData.nama_lengkap || 'Nama Anggota'}
+          </SuratNumber>
+          <SuratDetails>
+            <div><strong>Username:</strong> {suratData.username || '-'}</div>
+            <div><strong>Password:</strong> {suratData.password || '-'}</div>
+            <div><strong>Role:</strong> {suratData.role || '-'}</div>
+            {suratData.divisi && <div><strong>Divisi:</strong> {suratData.divisi || '-'}</div>}
+          </SuratDetails>
+        </SuratInfo>
+      );
+    }
+
+    if (suratData) {
+      return (
+        <SuratInfo>
+          <SuratNumber>
+            {suratData.nomor_surat || 'Nomor Surat'}
+          </SuratNumber>
+          <SuratDetails>
+            <div><strong>Perihal:</strong> {suratData.perihal || '-'}</div>
+            <div><strong>Pengirim:</strong> {suratData.pengirim || '-'}</div>
+            <div><strong>Tanggal Surat:</strong> {suratData.tanggal_surat ? new Date(suratData.tanggal_surat).toLocaleDateString('id-ID') : '-'}</div>
+          </SuratDetails>
+        </SuratInfo>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <ModalOverlay onClick={handleOverlayClick}>
       <ModalContainer>
@@ -315,25 +351,17 @@ const SuccessModal = ({
         <ModalBody>
           <SuccessMessage>
             <MessageText>
-              Surat masuk telah berhasil ditambahkan ke dalam sistem.
+              {showCredentials 
+                ? 'Anggota telah berhasil ditambahkan ke dalam sistem.'
+                : 'Surat masuk telah berhasil ditambahkan ke dalam sistem.'
+              }
             </MessageText>
 
-            {suratData && (
-              <SuratInfo>
-                <SuratNumber>
-                  {suratData.nomor_surat || 'Nomor Surat'}
-                </SuratNumber>
-                <SuratDetails>
-                  <div><strong>Perihal:</strong> {suratData.perihal || '-'}</div>
-                  <div><strong>Pengirim:</strong> {suratData.pengirim || '-'}</div>
-                  <div><strong>Tanggal Surat:</strong> {suratData.tanggal_surat ? new Date(suratData.tanggal_surat).toLocaleDateString('id-ID') : '-'}</div>
-                </SuratDetails>
-              </SuratInfo>
-            )}
+            {renderItemInfo()}
 
             {autoNavigate && (
               <MessageText style={{ fontSize: '14px', color: '#6c757d' }}>
-                Anda akan dialihkan ke halaman daftar surat dalam beberapa detik...
+                Anda akan dialihkan ke halaman daftar dalam beberapa detik...
               </MessageText>
             )}
           </SuccessMessage>

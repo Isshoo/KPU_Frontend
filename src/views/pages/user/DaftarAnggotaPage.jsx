@@ -490,13 +490,15 @@ const DaftarAnggotaPage = () => {
                 )}
                 <TableCell>{getRoleBadge(user.role)}</TableCell>
                 <TableCell>
-                  {user.divisi && <DivisiBadge>{getDivisiName(user.divisi)}</DivisiBadge>}
+                  {user.divisi ? <DivisiBadge>{getDivisiName(user.divisi) || '-'}</DivisiBadge> : <>{'No Division'}</>} 
                 </TableCell>
                 {authUser?.role === 'sekertaris' && (
                   <TableCell>
+                    {user.role !== 'sekertaris' ? 
                     <ActionButton className="danger" onClick={() => handleDelete(user)}>
                       <FaTrash /> Hapus
                     </ActionButton>
+                    : 'No Action'}
                   </TableCell>
                 )}
               </tr>
